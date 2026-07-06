@@ -1,34 +1,23 @@
 """Migration integration test.
 
-Programmatically runs ``alembic upgrade head`` against ``settings.DATABASE_URL``,
-then asserts the resulting schema: all six domain tables exist, the ``vector``
-extension is installed, and both special indexes are present.
+The actual ``alembic upgrade head`` is run once by the session-scoped
+``migrated_db`` autouse fixture in ``conftest.py`` (see that module for why it
+must run synchronously, outside pytest-asyncio's loop — LESSONS.md). This test
+therefore only *asserts* the resulting schema: all seven public tables exist,
+the ``vector`` extension is installed, and both special indexes are present.
 
-Never drops anything and is idempotent — ``upgrade head`` is a no-op when the DB
-is already at head, and the extension/index CREATEs in the migration are
-``IF NOT EXISTS``-safe. Requires a reachable Postgres (CI service / local
-``docker compose up -d``).
-
-This test is deliberately synchronous. Alembic's async ``env.py`` calls
-``asyncio.run()`` internally, which would raise "event loop already running" if
-this test were itself run inside pytest-asyncio's loop. So ``command.upgrade``
-runs at module-sync level, and the verification queries use their own isolated
-``asyncio.run``.
+The verification queries use their own isolated ``asyncio.run`` so they don't
+collide with the alembic run or with pytest-asyncio.
 """
 
 from __future__ import annotations
 
 import asyncio
-from pathlib import Path
 
-from alembic.config import Config
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from alembic import command
 from app.core.config import settings
-
-BACKEND_DIR = Path(__file__).resolve().parents[1]
 
 EXPECTED_TABLES = {
     "users",
@@ -44,13 +33,6 @@ EXPECTED_INDEXES = {
     "ix_knowledge_chunks_embedding",
     "ix_set_entries_user_exercise_created",
 }
-
-
-def _alembic_config() -> Config:
-    cfg = Config(str(BACKEND_DIR / "alembic.ini"))
-    # env.py injects sqlalchemy.url from settings, so no override needed here.
-    cfg.set_main_option("script_location", str(BACKEND_DIR / "alembic"))
-    return cfg
 
 
 async def _collect_schema() -> tuple[set[str], int | None, set[str]]:
@@ -86,10 +68,8 @@ async def _collect_schema() -> tuple[set[str], int | None, set[str]]:
         await engine.dispose()
 
 
-def test_migration_upgrade_head_builds_schema() -> None:
-    # Idempotent: a no-op if the DB is already at head.
-    command.upgrade(_alembic_config(), "head")
-
+def test_migration_head_builds_schema() -> None:
+    """Schema was built by the ``migrated_db`` fixture; assert its shape."""
     tables, has_vector, indexes = asyncio.run(_collect_schema())
 
     assert EXPECTED_TABLES <= tables, f"missing tables: {EXPECTED_TABLES - tables}"

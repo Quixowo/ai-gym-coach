@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
 
     # Auth
-    JWT_SECRET: str = "dev-secret-change-me"
+    JWT_SECRET: str = "dev-secret-change-me-not-for-production-0123456789"  # ≥32 bytes: PyJWT warns on short HS256 keys
     JWT_ACCESS_EXPIRE_MINUTES: int = 15
     JWT_REFRESH_EXPIRE_DAYS: int = 7
 

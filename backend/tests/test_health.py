@@ -2,16 +2,13 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from app.main import app
 
-client = TestClient(app)
-
-
-def test_health_returns_ok() -> None:
+def test_health_returns_ok(client: TestClient) -> None:
     """/health runs SELECT 1 through the async engine.
 
-    Requires a reachable Postgres (CI provides a live service; locally,
-    ``docker compose up -d`` is the accepted prerequisite — spec §16).
+    Uses the shared session-scoped ``client`` fixture (NullPool engine override),
+    so it plays nicely alongside the multi-request auth tests. Requires a
+    reachable Postgres (CI service / local ``docker compose up -d`` — spec §16).
     """
     response = client.get("/health")
     assert response.status_code == 200
