@@ -1,10 +1,21 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Anchor .env resolution to the repo layout, not the process CWD: the shared .env
+# lives at the repo root (CLAUDE.md), and a CWD-relative "env_file='.env'" silently
+# loads nothing when uvicorn/pytest run from backend/. Later entries win, so a
+# backend-local .env can override the root one.
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
+_ENV_FILES = (_BACKEND_DIR.parent / ".env", _BACKEND_DIR / ".env")
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=_ENV_FILES, env_file_encoding="utf-8", extra="ignore"
+    )
 
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/gym_coach"

@@ -15,6 +15,7 @@ export default defineConfig({
       '/workouts': { target: backend, changeOrigin: true },
       '/programs': { target: backend, changeOrigin: true },
       '/health': { target: backend, changeOrigin: true },
+      '/chat': { target: backend, changeOrigin: true },
     },
   },
 })

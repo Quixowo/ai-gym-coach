@@ -99,6 +99,13 @@ async def _override_get_db() -> AsyncGenerator[AsyncSession]:
         yield session
 
 
+# Public handle to the NullPool session maker for tests that drive the services /
+# agent layer directly (progression math, tool handlers) rather than via HTTP. Using
+# this — never the app's pooled ``async_session_maker`` — keeps DB setup on the same
+# NullPool engine, avoiding the closed-loop family of bugs in LESSONS.md.
+test_session_maker = _test_session_maker
+
+
 @pytest.fixture(scope="session", autouse=True)
 def client(migrated_db: None):
     """Session-scoped TestClient with the NullPool DB override applied.

@@ -39,6 +39,14 @@ export function Nav() {
               Programs
             </NavLink>
           </li>
+          <li>
+            <NavLink
+              to="/chat"
+              className={({ isActive }) => (isActive ? 'active' : '')}
+            >
+              Coach
+            </NavLink>
+          </li>
         </ul>
 
         <div className="nav-user">

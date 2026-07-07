@@ -13,8 +13,16 @@ from __future__ import annotations
 import contextlib
 import uuid
 from collections.abc import Iterator
+from datetime import UTC, datetime, timedelta
 
 from fastapi.testclient import TestClient
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.exercise import Exercise
+from app.models.set_entry import SetEntry
+from app.models.user import User
+from app.models.workout_session import WorkoutSession
 
 
 def unique_email() -> str:
@@ -80,3 +88,60 @@ def get_exercise_ids(client: TestClient, count: int = 2) -> list[str]:
     exercises = resp.json()
     assert len(exercises) >= count, "seeded catalog too small for this test"
     return [e["id"] for e in exercises[:count]]
+
+
+# --------------------------------------------------------------------------- #
+# Direct-DB helpers for service/agent-layer tests (progression math, tool handlers)
+# --------------------------------------------------------------------------- #
+async def create_db_user(db: AsyncSession) -> uuid.UUID:
+    """Insert a minimal user row directly and return its id (no HTTP/auth needed)."""
+    user = User(
+        email=unique_email(),
+        hashed_password="x",  # not verified in these tests
+        display_name="Test Lifter",
+        experience_level="intermediate",
+        primary_goal="hypertrophy",
+        injury_notes=None,
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return user.id
+
+
+async def first_exercise_id(db: AsyncSession) -> uuid.UUID:
+    """Return the id of the first seeded exercise (ordered by name)."""
+    return (await db.execute(select(Exercise.id).order_by(Exercise.name).limit(1))).scalar_one()
+
+
+async def add_session_with_sets(
+    db: AsyncSession,
+    user_id: uuid.UUID,
+    exercise_id: uuid.UUID,
+    sets: list[tuple[float, int, float | None]],
+    days_ago: int = 0,
+    status: str = "finished",
+) -> uuid.UUID:
+    """Create one workout session dated ``days_ago`` days back, with the given sets.
+
+    ``sets`` is a list of ``(weight, reps, rir)`` tuples. Session date drives the
+    oldest->newest ordering in ``progression_service.analyze``. Returns the session id.
+    """
+    when = datetime.now(UTC) - timedelta(days=days_ago)
+    session = WorkoutSession(user_id=user_id, program_id=None, date=when, status=status)
+    db.add(session)
+    await db.flush()
+    for i, (weight, reps, rir) in enumerate(sets, start=1):
+        db.add(
+            SetEntry(
+                session_id=session.id,
+                user_id=user_id,
+                exercise_id=exercise_id,
+                set_number=i,
+                weight=weight,
+                reps=reps,
+                rir=rir,
+            )
+        )
+    await db.commit()
+    return session.id

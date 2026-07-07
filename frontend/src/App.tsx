@@ -4,6 +4,7 @@ import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { WorkoutLog } from './pages/WorkoutLog'
 import { ProgramBuilder } from './pages/ProgramBuilder'
+import { Chat } from './pages/Chat'
 import { Nav } from './components/Nav'
 import type { ReactNode } from 'react'
 
@@ -55,6 +56,10 @@ function AppRoutes() {
         <Route
           path="/programs"
           element={<RequireAuth><ProgramBuilder /></RequireAuth>}
+        />
+        <Route
+          path="/chat"
+          element={<RequireAuth><Chat /></RequireAuth>}
         />
         <Route path="/" element={<Navigate to="/workout" replace />} />
         <Route path="*" element={<Navigate to="/workout" replace />} />
