@@ -33,6 +33,7 @@ from app.core.logging import get_logger
 from app.db import session as db_session_module
 from app.services import (
     exercise_service,
+    knowledge_service,
     program_service,
     progression_service,
     workout_service,
@@ -197,6 +198,29 @@ async def handle_analyze_progression(
         return {"error": "internal error executing analyze_progression"}
 
 
+async def handle_search_knowledge_base(
+    tool_input: dict, current_user_id: uuid.UUID, db: AsyncSession
+) -> dict:
+    """RAG tool handler (spec §8.7/§9.2) — read-only, reuses the request-scoped session.
+
+    The knowledge base is global/unscoped non-user data, so ``current_user_id`` is
+    accepted only for the uniform handler signature (like ``search_exercises``). Every
+    failure in the pipeline — Voyage embedding outage, Anthropic outage, DB error —
+    must surface as ``{"error": ...}`` (CLAUDE.md rule 4): an embedding-provider
+    exception here would otherwise tear down the whole SSE stream.
+    """
+    try:
+        query = tool_input.get("query")
+        if not query or not str(query).strip():
+            return {"error": "query is required"}
+        return await knowledge_service.search_knowledge_base(db, str(query))
+    except ServiceError as exc:
+        return {"error": str(exc)}
+    except Exception:  # noqa: BLE001 — provider/DB outage must become a structured error
+        log.exception("tool_unhandled_error", extra={"tool_name": "search_knowledge_base"})
+        return {"error": "internal error executing search_knowledge_base"}
+
+
 # --------------------------------------------------------------------------- #
 # Mutating handlers — own session per call (see module docstring).
 # --------------------------------------------------------------------------- #
@@ -323,6 +347,7 @@ _HANDLERS = {
     "update_program": handle_update_program,
     "search_exercises": handle_search_exercises,
     "analyze_progression": handle_analyze_progression,
+    "search_knowledge_base": handle_search_knowledge_base,
 }
 
 

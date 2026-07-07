@@ -1,13 +1,15 @@
-"""Tool schemas sent to Claude (spec §8.1–8.6).
+"""Tool schemas sent to Claude (spec §8.1–8.7).
 
-The six non-RAG tools available to the agent loop. ``search_knowledge_base``
-(§8.7) is Phase 5 and is deliberately absent here.
+The seven tools available to the agent loop: the six non-RAG tools plus the RAG
+tool ``search_knowledge_base`` (§8.7, added in Phase 5).
 
 Invariant (CLAUDE.md rule 2 / spec §6.5): **no ``user_id`` — or any user-scoping
 field — appears in any schema below.** There is nothing for the model to set even
 under adversarial prompting; the orchestrator injects the verified ``user_id`` into
 every handler at execution time, from the JWT-resolved session. Do not add a user
 field here "to be validated later" — its structural absence is the defense.
+(``search_knowledge_base`` is the trivial case: the knowledge base is global/unscoped
+non-user data, so it carries only a ``query`` — no user field to omit.)
 """
 
 from __future__ import annotations
@@ -124,8 +126,22 @@ ANALYZE_PROGRESSION_TOOL = {
     },
 }
 
-# The full tool list handed to Claude every turn (§8.1–8.6). search_knowledge_base
-# (§8.7) is Phase 5 and intentionally not included.
+SEARCH_KNOWLEDGE_BASE_TOOL = {
+    "name": "search_knowledge_base",
+    "description": (
+        "Search the coach's curated knowledge base (training principles, nutrition, "
+        "injury-prevention information) for a grounded answer. Use for questions "
+        "about what's generally advisable or true — not for questions about the "
+        "user's own logged data."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {"query": {"type": "string"}},
+        "required": ["query"],
+    },
+}
+
+# The full tool list handed to Claude every turn (§8.1–8.7).
 ALL_TOOL_DEFINITIONS = [
     GET_WORKOUT_HISTORY_TOOL,
     LOG_SET_TOOL,
@@ -133,4 +149,5 @@ ALL_TOOL_DEFINITIONS = [
     UPDATE_PROGRAM_TOOL,
     SEARCH_EXERCISES_TOOL,
     ANALYZE_PROGRESSION_TOOL,
+    SEARCH_KNOWLEDGE_BASE_TOOL,
 ]
