@@ -18,6 +18,7 @@ import {
   useCallback,
   type FormEvent,
 } from 'react'
+import { ClipboardList, Dumbbell } from 'lucide-react'
 import {
   listSessions,
   startSession,
@@ -410,7 +411,7 @@ function Scoreboard({ groups }: { groups: ExerciseGroup[] }) {
         <div key={group.exerciseId}>
           <div style={{
             fontFamily: 'var(--font-display)',
-            fontWeight: 700,
+            fontWeight: 600,
             fontSize: '0.875rem',
             color: 'var(--color-text-2)',
             letterSpacing: '0.04em',
@@ -463,7 +464,9 @@ function History({ entries }: { entries: HistoryEntry[] }) {
   if (!entries.length) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon" aria-hidden="true">📋</div>
+        <div className="empty-state-icon" aria-hidden="true">
+          <ClipboardList size={40} strokeWidth={1.5} />
+        </div>
         <h3>No history yet</h3>
         <p>Finish a workout and your sets will show up here.</p>
       </div>
@@ -629,6 +632,10 @@ export function WorkoutLog() {
           </div>
         )}
 
+        {/* Two columns on desktop (≥1024px): active session/start on the
+            left, history on the right. Single column, same DOM order, on
+            mobile — the divider only renders in the stacked layout. */}
+        <div className="workout-columns">
         {/* Active session */}
         {activeSession ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
@@ -637,7 +644,7 @@ export function WorkoutLog() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
                 <div className="session-status-dot" aria-hidden="true" />
                 <div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.9375rem' }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9375rem' }}>
                     Session in progress
                   </div>
                   <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-3)' }}>
@@ -692,7 +699,9 @@ export function WorkoutLog() {
 
             {groups.length === 0 && (
               <div className="empty-state" style={{ padding: 'var(--sp-8) var(--sp-4)' }}>
-                <div className="empty-state-icon" aria-hidden="true">🏋️</div>
+                <div className="empty-state-icon" aria-hidden="true">
+                  <Dumbbell size={40} strokeWidth={1.5} />
+                </div>
                 <h3>Pick an exercise to start</h3>
                 <p>Search above, then log your first set.</p>
               </div>
@@ -731,6 +740,7 @@ export function WorkoutLog() {
           ) : (
             <History entries={history} />
           )}
+        </div>
         </div>
       </div>
 

@@ -1,40 +1,68 @@
 /* =====================================================================
    HeyCoach — design token system
 
-   Subject: weightlifting tracker, phone-propped-against-bench, glanceable
-   Palette: dark industrial — no cream/serif defaults, no acid-green defaults.
+   Direction: Apple design language (see DESIGN.md) inverted to a true-black
+   canvas and applied to app UI rather than a marketing site. Single blue
+   accent, system-font stack, hairlines over shadows, pill CTAs, tight
+   display tracking. No gradients. No shadows on chrome — elevation comes
+   from surface micro-steps (bg → surface-1 → surface-2 → surface-3) and
+   hairline borders only.
+
    Signature element: the "scoreboard" set display — oversized tabular-nums
-   in a dark panel, like plate math on a barbell.
+   on a surface-1 panel, like an Apple Watch workout summary.
    ===================================================================== */
 
-/* ---- Google Fonts: Space Grotesk (display/headings) + Inter (body) --- */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap');
+/* ---- Google Fonts: Inter (SF Pro substitute — see DESIGN.md font-substitute note) --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
 /* ---- Design tokens ---- */
 :root {
-  /* Colors */
-  --color-bg:        #111827;   /* deep navy-charcoal — not pure black, has warmth */
-  --color-surface:   #1C2333;   /* slightly lighter panel surface */
-  --color-surface-2: #242E42;   /* elevated card / modal */
-  --color-border:    #2E3D55;   /* subtle border */
-  --color-accent:    #FF4D00;   /* orange-red — loaded barbell heat, not vermilion */
-  --color-accent-dim:#C93C00;   /* accent pressed state */
-  --color-ok:        #22C55E;   /* completion / success */
-  --color-ok-dim:    #15803D;
-  --color-warn:      #F59E0B;   /* caution */
-  --color-text:      #F5F4EF;   /* warm concrete-white — not blue-white, not cream */
-  --color-text-2:    #9AAFC7;   /* secondary text */
-  --color-text-3:    #5A6E87;   /* placeholder / muted */
-  --color-danger:    #EF4444;   /* error / destructive */
+  /* Canvas & surfaces (elevation = micro-steps, not shadow) */
+  --color-bg:        #000000;   /* true black — the void the whole app floats on */
+  --color-surface:   #1d1d1f;   /* panels / cards ("surface-1") */
+  --color-surface-2: #272729;   /* elevated / hover step */
+  --color-surface-3: #2a2a2c;   /* higher step (active / pressed hover) */
 
-  /* Type */
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
-  --font-body:    'Inter', system-ui, sans-serif;
+  /* Hairlines (borders, not fills) */
+  --color-border:        rgba(255, 255, 255, 0.10);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
 
-  /* Radii */
-  --radius-sm:  4px;
-  --radius-md:  8px;
-  --radius-lg:  12px;
+  /* Accent — the only interactive color, in two roles */
+  --color-accent:      #0071e3;  /* filled CTA background */
+  --color-accent-dim:  #0066cc;  /* CTA pressed / hover */
+  --color-accent-rgb:  0, 113, 227;
+  --color-link:        #2997ff; /* Sky Link Blue — inline links, nav, focus accents on dark */
+  --color-link-rgb:    41, 151, 255;
+
+  /* Semantic (forms/status only, not decoration) — Apple dark-mode system colors */
+  --color-ok:          #30d158;
+  --color-ok-rgb:      48, 209, 88;
+  --color-ok-dim:      #29b24b;  /* pressed/hover */
+  --color-ok-text:     #86efac; /* readable tint for banners/labels on dark */
+  --color-warn:        #ffd60a;
+  --color-warn-rgb:    255, 214, 10;
+  --color-warn-text:   #fcd34d;
+  --color-danger:      #ff453a;
+  --color-danger-rgb:  255, 69, 58;
+  --color-danger-dim:  #d93b31;  /* pressed/hover */
+  --color-danger-text: #fca5a5;
+
+  /* Text */
+  --color-text:   #f5f5f7;
+  --color-text-2: #a1a1a6;
+  --color-text-3: #6e6e73;
+
+  /* Type — system stack; Inter is the open-source SF Pro substitute.
+     One stack for both display and body (Space Grotesk dropped entirely);
+     the distinction is expressed via weight/tracking, not a second family. */
+  --font-display: -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
+
+  /* Radii — two grammars: compact utility rects and the signature pill */
+  --radius-sm:   8px;
+  --radius-md:   11px;
+  --radius-lg:   18px;
+  --radius-pill: 9999px;
 
   /* Spacing scale */
   --sp-1:  4px;
@@ -47,9 +75,11 @@
   --sp-10: 40px;
   --sp-12: 48px;
 
-  /* Shadows */
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
-  --shadow-panel: 0 4px 16px rgba(0,0,0,0.5);
+  /* Shadows — zero by default. Apple reserves its one shadow for product
+     photography resting on a surface; nothing in this app qualifies.
+     Elevation comes from surface steps + hairlines only. */
+  --shadow-card:  none;
+  --shadow-panel: none;
 }
 
 /* ---- Reset + base ---- */
@@ -62,8 +92,8 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: 1.0625rem; /* 17px — Apple's body-copy pixel, Inter-adjusted line-height below */
+  line-height: 1.44;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -72,40 +102,43 @@ body {
 /* ---- Typography ---- */
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 700;
-  line-height: 1.2;
+  font-weight: 600; /* Apple headlines sit at 600, never 700 */
   color: var(--color-text);
 }
 
-h1 { font-size: 1.75rem; }
-h2 { font-size: 1.375rem; }
-h3 { font-size: 1.125rem; }
-h4 { font-size: 1rem; }
+h1 { font-size: 1.75rem; line-height: 1.15; letter-spacing: -0.02em; }
+h2 { font-size: 1.375rem; line-height: 1.2; letter-spacing: -0.015em; }
+h3 { font-size: 1.125rem; line-height: 1.25; letter-spacing: -0.012em; }
+h4 { font-size: 1rem; line-height: 1.3; letter-spacing: -0.01em; }
 
 p { color: var(--color-text-2); }
 
-a { color: var(--color-accent); text-decoration: none; }
+a { color: var(--color-link); text-decoration: none; }
 a:hover { text-decoration: underline; }
-a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: var(--radius-sm); }
+a:focus-visible { outline: 2px solid var(--color-link); outline-offset: 2px; border-radius: var(--radius-sm); }
 
-/* ---- Buttons ---- */
+/* ---- Buttons ----
+   Grammar: primary/success/danger are filled pills (the signature Apple
+   action shape). Ghost is the compact utility rect on surface-2 — used for
+   secondary/dismiss/nav actions (Log out, Back, Remove, Skip). */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--sp-2);
-  padding: var(--sp-3) var(--sp-5);
-  font-family: var(--font-display);
+  padding: 11px 22px;
+  font-family: var(--font-body);
   font-size: 0.9375rem;
   font-weight: 600;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   cursor: pointer;
-  transition: background-color 0.15s, transform 0.1s;
+  transition: background-color 0.2s ease-out, border-color 0.2s ease-out,
+              color 0.2s ease-out, transform 0.15s ease-out;
   white-space: nowrap;
   min-height: 44px; /* touch target */
 }
-.btn:active { transform: scale(0.97); }
+.btn:active:not(:disabled) { transform: scale(0.97); }
 .btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn:disabled:active { transform: none; }
@@ -118,25 +151,31 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 
 .btn-success {
   background: var(--color-ok);
-  color: #fff;
+  color: #04280f; /* dark text — required for AA contrast on the light-green fill */
 }
 .btn-success:hover:not(:disabled) { background: var(--color-ok-dim); }
 
 .btn-ghost {
-  background: transparent;
+  background: var(--color-surface-2);
   color: var(--color-text-2);
   border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 15px;
 }
-.btn-ghost:hover:not(:disabled) { background: var(--color-surface-2); color: var(--color-text); }
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-surface-3);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
 
 .btn-danger {
   background: var(--color-danger);
   color: #fff;
 }
-.btn-danger:hover:not(:disabled) { background: #DC2626; }
+.btn-danger:hover:not(:disabled) { background: var(--color-danger-dim); }
 
 .btn-sm {
-  padding: var(--sp-2) var(--sp-3);
+  padding: 8px 14px;
   font-size: 0.875rem;
   min-height: 36px;
 }
@@ -151,11 +190,11 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 }
 
 .field label {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--color-text-2);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
@@ -170,7 +209,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   font-size: 1rem;
   padding: var(--sp-3) var(--sp-4);
   min-height: 44px;
-  transition: border-color 0.15s;
+  transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
   width: 100%;
 }
 
@@ -179,7 +218,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 .field textarea:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.2);
+  box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.25);
 }
 
 .field input::placeholder,
@@ -189,32 +228,33 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 
 .field select option {
   background: var(--color-surface-2);
+  color: var(--color-text);
 }
 
 /* ---- Error / info banners ---- */
 .error-banner {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(var(--color-danger-rgb), 0.12);
+  border: 1px solid rgba(var(--color-danger-rgb), 0.4);
   border-radius: var(--radius-md);
-  color: #FCA5A5;
+  color: var(--color-danger-text);
   font-size: 0.9rem;
   padding: var(--sp-3) var(--sp-4);
 }
 
 .warn-banner {
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(var(--color-warn-rgb), 0.12);
+  border: 1px solid rgba(var(--color-warn-rgb), 0.4);
   border-radius: var(--radius-md);
-  color: #FCD34D;
+  color: var(--color-warn-text);
   font-size: 0.9rem;
   padding: var(--sp-3) var(--sp-4);
 }
 
 .success-banner {
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.4);
+  background: rgba(var(--color-ok-rgb), 0.12);
+  border: 1px solid rgba(var(--color-ok-rgb), 0.4);
   border-radius: var(--radius-md);
-  color: #86EFAC;
+  color: var(--color-ok-text);
   font-size: 0.9rem;
   padding: var(--sp-3) var(--sp-4);
 }
@@ -253,38 +293,66 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   padding: 0 var(--sp-4);
 }
 
+@media (min-width: 1024px) {
+  .page-shell {
+    max-width: 1080px;
+    padding: 0 var(--sp-8);
+  }
+}
+
 /* ---- Nav ---- */
 .app-nav {
-  background: var(--color-surface);
+  height: 48px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 50;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .app-nav { background: var(--color-bg); }
 }
 
 .app-nav-inner {
   max-width: 640px;
   margin: 0 auto;
   padding: 0 var(--sp-4);
-  height: 56px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-4);
 }
 
+@media (min-width: 1024px) {
+  .app-nav-inner { max-width: 1080px; padding: 0 var(--sp-8); }
+}
+
 .nav-brand {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
   color: var(--color-text);
   display: flex;
   align-items: center;
   gap: var(--sp-2);
 }
 
-.nav-brand span {
-  color: var(--color-accent);
+.nav-brand-accent {
+  color: var(--color-link);
+}
+
+/* Wraps nav-links + nav-user. Inline on desktop; collapses to a dropdown
+   panel under the bar on narrow viewports (see the hamburger toggle below) —
+   there is no room for the brand + 3 links + user name + logout in one row
+   under ~640px, so it collapses rather than overflowing the page. */
+.nav-collapsible {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
 }
 
 .nav-links {
@@ -296,15 +364,15 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 
 .nav-links a {
   color: var(--color-text-2);
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: var(--sp-2) var(--sp-3);
-  border-radius: var(--radius-md);
-  transition: color 0.15s, background 0.15s;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 400;
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--radius-pill);
+  transition: color 0.2s ease-out, background-color 0.2s ease-out;
 }
 .nav-links a:hover { color: var(--color-text); background: var(--color-surface-2); text-decoration: none; }
-.nav-links a.active { color: var(--color-text); background: var(--color-surface-2); }
+.nav-links a.active { color: var(--color-text); background: var(--color-surface-2); font-weight: 600; }
 
 .nav-user {
   display: flex;
@@ -315,7 +383,67 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 .nav-user-name {
   font-size: 0.875rem;
   color: var(--color-text-2);
-  font-weight: 500;
+  font-weight: 400;
+}
+
+/* Hamburger toggle — hidden on desktop, shown only when the row collapses. */
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease-out;
+}
+.nav-toggle:hover { background: var(--color-surface-2); }
+.nav-toggle:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  .nav-toggle { display: flex; }
+
+  .nav-collapsible {
+    display: none;
+    position: absolute;
+    top: 48px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    /* Solid, not translucent: page content must not ghost through menu labels
+       (and backdrop-filter isn't guaranteed — without it a translucent panel
+       leaves the underlying page legible behind the links). */
+    background: #000;
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--sp-2) var(--sp-4) var(--sp-4);
+  }
+  .nav-collapsible--open { display: flex; }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-1);
+  }
+  .nav-links a {
+    padding: var(--sp-3);
+    border-radius: var(--radius-sm);
+  }
+
+  .nav-user {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-2);
+    margin-top: var(--sp-3);
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--color-border);
+  }
+  .nav-user-name { padding: 0 var(--sp-1); }
+  .nav-user .btn { width: 100%; }
 }
 
 /* ---- Divider ---- */
@@ -337,8 +465,9 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 }
 
 .empty-state-icon {
-  font-size: 2.5rem;
-  opacity: 0.35;
+  display: flex;
+  color: var(--color-text-3);
+  opacity: 0.7;
 }
 
 .empty-state h3 { color: var(--color-text-2); }
@@ -362,6 +491,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   align-items: center;
   justify-content: center;
   padding: var(--sp-6);
+  background: var(--color-bg);
 }
 
 .auth-card {
@@ -369,27 +499,30 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-panel);
-  padding: var(--sp-8);
+  padding: var(--sp-10) var(--sp-8);
   width: 100%;
   max-width: 420px;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-5);
+  gap: var(--sp-6);
 }
 
 .auth-header {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-1);
+  gap: var(--sp-2);
 }
 
 .auth-brand {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-accent);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.auth-brand-accent {
+  color: var(--color-link);
 }
 
 .auth-form {
@@ -406,9 +539,10 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 
 /* ---- SIGNATURE ELEMENT: Scoreboard set display ---- */
 /*
-  Oversized tabular-nums in a dark panel — the single memorable element.
-  Renders weight×reps like a scoreboard or plate math in your head.
-  Used in the WorkoutLog active session for each logged set.
+  Oversized tabular-nums on a surface-1 panel — the single memorable
+  element, reading like an Apple Watch workout summary rather than an
+  industrial scoreboard. Used in the WorkoutLog active session for each
+  logged set.
 */
 .scoreboard-grid {
   display: grid;
@@ -420,14 +554,14 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   grid-template-columns: 2rem 1fr 1fr 1fr auto;
   align-items: center;
   gap: var(--sp-3);
-  background: var(--color-bg);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--sp-3) var(--sp-4);
 }
 
 .scoreboard-set-num {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text-3);
@@ -443,7 +577,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 .scoreboard-num {
   font-family: var(--font-display);
   font-size: 1.375rem;
-  font-weight: 700;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--color-text);
   line-height: 1;
@@ -451,7 +585,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 
 .scoreboard-unit {
   font-size: 0.6875rem;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-3);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -476,7 +610,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   right: 0;
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-panel);
   z-index: 20;
   max-height: 240px;
@@ -491,10 +625,10 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   flex-direction: column;
   gap: 2px;
   border-bottom: 1px solid var(--color-border);
-  transition: background 0.1s;
+  transition: background 0.15s ease-out;
 }
 .exercise-result-item:last-child { border-bottom: none; }
-.exercise-result-item:hover { background: var(--color-border); }
+.exercise-result-item:hover { background: var(--color-surface-3); }
 
 .exercise-result-name {
   font-family: var(--font-display);
@@ -512,7 +646,6 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 .session-header {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-accent);
   border-radius: var(--radius-lg);
   padding: var(--sp-4) var(--sp-5);
   display: flex;
@@ -548,9 +681,26 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   justify-content: space-between;
   gap: var(--sp-4);
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  text-align: left;
+  width: 100%;
+  transition: background 0.2s ease-out, border-color 0.2s ease-out;
 }
-.program-card:hover { background: var(--color-surface-2); border-color: var(--color-text-3); }
+.program-card:hover { background: var(--color-surface-2); border-color: var(--color-border-strong); }
+
+/* Responsive list of program cards: single column on mobile, 2-up once the
+   widened shell gives us the room (≥1024px). */
+.program-list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+@media (min-width: 1024px) {
+  .program-list-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+  }
+}
 
 .program-exercise-row {
   display: grid;
@@ -614,6 +764,28 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   .set-form-fields { grid-template-columns: 1fr 1fr; }
 }
 
+/* ---- WorkoutLog two-column desktop layout ----
+   Active session + history stack on mobile; side-by-side once the widened
+   shell (≥1024px) gives room to breathe. The <hr class="divider"> that
+   separates them in the stacked layout is redundant once they're columns,
+   so it's hidden there. */
+.workout-columns {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+@media (min-width: 1024px) {
+  .workout-columns {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    align-items: start;
+    gap: var(--sp-8);
+  }
+  .workout-columns > .divider {
+    display: none;
+  }
+}
+
 /* ---- Tabs ---- */
 .tab-bar {
   display: flex;
@@ -634,7 +806,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   padding: var(--sp-2) var(--sp-3);
   cursor: pointer;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  transition: color 0.15s, border-color 0.15s;
+  transition: color 0.15s ease-out, border-color 0.15s ease-out;
   min-height: 44px;
 }
 .tab-btn:hover { color: var(--color-text); }
@@ -647,19 +819,34 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 /* ---- Chat page ---- */
 
 /*
-  Outer layout: two columns — chat (flex:1, min 320px) and trace panel (320px fixed).
-  On narrow viewports the trace panel stacks below the chat column.
-  The wrapper is full-viewport-height below the 56px nav.
+  Outer layout: two columns — chat (flex:1, min 320px) and trace panel (300px
+  fixed). On narrow viewports the trace panel stacks below the chat column.
+  The wrapper is full-viewport-height below the 48px nav.
 */
 .chat-layout {
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  height: calc(100vh - 56px); /* 56px = nav height */
+  height: calc(100vh - 48px); /* 48px = nav height */
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   gap: 0;
+}
+
+/* Narrow: stack trace below chat */
+@media (max-width: 768px) {
+  .chat-layout {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 48px);
+    max-width: 640px;
+  }
+
+  .chat-page {
+    height: calc(100vh - 48px - 260px); /* reserve height for trace panel below */
+    min-height: 0;
+  }
 }
 
 /*
@@ -672,21 +859,6 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   flex: 1;
   min-width: 0; /* flex shrink past content */
   height: 100%;
-}
-
-/* Narrow: stack trace below chat */
-@media (max-width: 768px) {
-  .chat-layout {
-    flex-direction: column;
-    height: auto;
-    min-height: calc(100vh - 56px);
-    max-width: 640px;
-  }
-
-  .chat-page {
-    height: calc(100vh - 56px - 260px); /* reserve height for trace panel below */
-    min-height: 0;
-  }
 }
 
 .chat-messages {
@@ -723,42 +895,40 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   white-space: pre-wrap; /* preserve line breaks in coach responses */
 }
 
-/* User bubble: accent background, right side */
+/* User bubble: accent fill, right side */
 .chat-bubble--user {
   background: var(--color-accent);
   color: #fff;
   border-bottom-right-radius: var(--radius-sm);
 }
 
-/* Coach bubble: surface panel with left accent stripe, left side */
+/* Coach bubble: surface-1 with a hairline — no left accent stripe */
 .chat-bubble--coach {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-accent);
   color: var(--color-text);
   border-bottom-left-radius: var(--radius-sm);
 }
 
-/* Error / interrupted state */
+/* Error / interrupted state — the hairline itself recolors, no thick stripe */
 .chat-bubble--error {
-  border-left-color: var(--color-danger);
+  border-color: rgba(var(--color-danger-rgb), 0.4);
 }
 
 /* Rate-limited — warn tone */
 .chat-bubble--rate-limited {
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  border-left: 3px solid var(--color-warn);
-  color: #FCD34D;
+  background: rgba(var(--color-warn-rgb), 0.1);
+  border: 1px solid rgba(var(--color-warn-rgb), 0.35);
+  color: var(--color-warn-text);
 }
 
 /* Error inline row (shown below partial content) */
 .chat-error-row {
   margin-top: var(--sp-2);
   padding-top: var(--sp-2);
-  border-top: 1px solid rgba(239, 68, 68, 0.25);
+  border-top: 1px solid rgba(var(--color-danger-rgb), 0.25);
   font-size: 0.875rem;
-  color: #FCA5A5;
+  color: var(--color-danger-text);
   display: flex;
   align-items: center;
   gap: var(--sp-1);
@@ -772,7 +942,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 .chat-retry-btn {
   background: none;
   border: none;
-  color: var(--color-accent);
+  color: var(--color-link);
   font-size: 0.875rem;
   font-family: var(--font-body);
   cursor: pointer;
@@ -780,9 +950,9 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-.chat-retry-btn:hover { color: var(--color-accent-dim); }
+.chat-retry-btn:hover { color: var(--color-accent); }
 .chat-retry-btn:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-link);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
@@ -792,7 +962,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   display: inline-block;
   width: 2px;
   height: 1em;
-  background: var(--color-accent);
+  background: var(--color-link);
   margin-left: 2px;
   vertical-align: text-bottom;
   animation: blink 0.9s step-start infinite;
@@ -836,13 +1006,13 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   min-height: 44px;
   max-height: 140px;
   overflow-y: auto;
-  transition: border-color 0.15s;
+  transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
   field-sizing: content; /* auto-grow where supported */
 }
 .chat-input:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px rgba(255, 77, 0, 0.2);
+  box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.25);
 }
 .chat-input::placeholder { color: var(--color-text-3); }
 .chat-input:disabled {
@@ -855,7 +1025,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   width: 44px;
   height: 44px;
   padding: 0;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -871,18 +1041,15 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 /* ---- Trace panel ---- */
 
 /*
-  The trace panel is a console/instrument readout — reads like a terminal
-  sidebar. Left-bordered instrument panel at a fixed width, dark surface,
-  monospace-flavored type for labels and numbers.
-
-  Latency numbers reuse the scoreboard aesthetic (tabular-nums, font-display)
-  scaled to inline size — consistent with the project's signature element.
+  The trace panel is restyled as a surface-black instrument readout — a
+  hairline seam separates it from the chat void, with muted micro-labels
+  and tabular latency numerals reusing the scoreboard aesthetic.
 
   Design decisions:
-  - Fixed 300px width on desktop; full-width on mobile (stacked).
-  - Left border in --color-border + subtly lighter background than the chat
-    column creates depth without a heavy shadow.
-  - Pulse dot for in-progress tool calls reuses session-status-dot pattern.
+  - Pure-black panel (--color-bg) with a hairline left border — reads as
+    void-within-void, distinct from the surface-1 chat bubbles beside it.
+  - Pulse dot for in-progress tool calls uses --color-link (#2997ff) per
+    the on-dark accent rule.
   - turn_complete divider uses a full-width hairline so consecutive turns
     group visually as the event list accumulates.
   - Error rows use --color-danger accent treatment (consistent with chat errors).
@@ -893,7 +1060,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  background: var(--color-surface);
+  background: var(--color-bg);
   border-left: 1px solid var(--color-border);
   height: 100%;
   overflow: hidden;
@@ -922,7 +1089,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 .trace-panel-title {
   font-family: var(--font-display);
   font-size: 0.8125rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-2);
@@ -957,9 +1124,10 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 }
 
 .trace-empty-icon {
-  font-size: 1.5rem;
-  opacity: 0.2;
-  line-height: 1;
+  display: flex;
+  justify-content: center;
+  color: var(--color-text-3);
+  opacity: 0.5;
 }
 
 .trace-empty-text {
@@ -977,7 +1145,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   padding: var(--sp-2) var(--sp-4);
   min-height: 32px;
   flex-shrink: 0; /* body is a flex column — rows must scroll, never compress */
-  border-bottom: 1px solid rgba(46, 61, 85, 0.5); /* --color-border at 50% */
+  border-bottom: 1px solid var(--color-border);
 }
 
 .trace-row:last-child {
@@ -1033,12 +1201,12 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   font-size: 0.8125rem;
 }
 
-/* In-progress pulse dot (matches session-status-dot) */
+/* In-progress pulse dot */
 .trace-pulse-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--color-accent);
+  background: var(--color-link);
   flex-shrink: 0;
   margin-top: 5px; /* align with first text line */
   animation: pulse 2s ease-in-out infinite;
@@ -1047,24 +1215,20 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
   .trace-pulse-dot { animation: none; }
 }
 
-/* Completed checkmark */
+/* Completed checkmark icon */
 .trace-check {
-  font-size: 0.75rem;
+  display: flex;
   color: var(--color-ok);
   flex-shrink: 0;
   margin-top: 3px;
-  line-height: 1;
-  font-weight: 700;
 }
 
-/* Error flag */
+/* Error flag icon */
 .trace-error-flag {
-  font-size: 0.75rem;
+  display: flex;
   color: var(--color-danger);
   flex-shrink: 0;
   margin-top: 3px;
-  line-height: 1;
-  font-weight: 700;
 }
 
 /* Latency: inline scoreboard mini-number */
@@ -1078,7 +1242,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 .trace-latency-num {
   font-family: var(--font-display);
   font-size: 0.9375rem;
-  font-weight: 700;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--color-text);
   line-height: 1;
@@ -1086,7 +1250,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 
 .trace-latency-unit {
   font-size: 0.625rem;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-3);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -1105,12 +1269,12 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 }
 
 .trace-summary--error {
-  color: #FCA5A5;
+  color: var(--color-danger-text);
 }
 
 /* Error row */
 .trace-row--error {
-  background: rgba(239, 68, 68, 0.06);
+  background: rgba(var(--color-danger-rgb), 0.06);
 }
 
 /* ---- Turn-complete divider ---- */
@@ -1151,7 +1315,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 .trace-turn-num {
   font-family: var(--font-display);
   font-size: 0.875rem;
-  font-weight: 700;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--color-text-2);
   line-height: 1;
@@ -1159,7 +1323,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 
 .trace-turn-unit {
   font-size: 0.625rem;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-3);
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1184,7 +1348,7 @@ a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; b
 .text-sm { font-size: 0.875rem; }
 .text-xs { font-size: 0.8125rem; }
 .font-display { font-family: var(--font-display); }
-.font-bold { font-weight: 700; }
+.font-bold { font-weight: 600; }
 .mt-3 { margin-top: var(--sp-3); }
 .mt-4 { margin-top: var(--sp-4); }
 .mt-5 { margin-top: var(--sp-5); }

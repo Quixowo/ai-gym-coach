@@ -55,7 +55,7 @@ export function Register() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-brand">HeyCoach</div>
+          <div className="auth-brand">Hey<span className="auth-brand-accent">Coach</span></div>
           <h1>Create account</h1>
           <p className="text-sm text-muted">Get set up in under a minute.</p>
         </div>

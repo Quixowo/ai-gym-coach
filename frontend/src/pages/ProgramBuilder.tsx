@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect, type FormEvent } from 'react'
+import { ClipboardList, ChevronRight, ArrowLeft } from 'lucide-react'
 import {
   listPrograms,
   getProgram,
@@ -53,7 +54,9 @@ function ProgramList({ programs, loading, error, onSelect, onNew }: ProgramListP
 
       {programs.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon" aria-hidden="true">📋</div>
+          <div className="empty-state-icon" aria-hidden="true">
+            <ClipboardList size={40} strokeWidth={1.5} />
+          </div>
           <h3>No programs yet</h3>
           <p>Create a program to plan your next training block, or save one after a workout.</p>
           <button className="btn btn-primary" onClick={onNew}>
@@ -61,23 +64,22 @@ function ProgramList({ programs, loading, error, onSelect, onNew }: ProgramListP
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+        <div className="program-list-grid">
           {programs.map((p) => (
             <button
               key={p.id}
               className="program-card"
               onClick={() => onSelect(p.id)}
-              style={{ textAlign: 'left', cursor: 'pointer', background: 'none', border: '1px solid var(--color-border)' }}
             >
               <div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', color: 'var(--color-text)' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '1rem', color: 'var(--color-text)' }}>
                   {p.name}
                 </div>
                 <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-3)', marginTop: 2 }}>
                   Created {new Date(p.created_at).toLocaleDateString()}
                 </div>
               </div>
-              <span style={{ color: 'var(--color-text-3)', fontSize: '1.25rem' }}>›</span>
+              <ChevronRight size={20} strokeWidth={1.75} color="var(--color-text-3)" aria-hidden="true" />
             </button>
           ))}
         </div>
@@ -136,7 +138,7 @@ function ExerciseRow({ ex, onChange, onRemove, index }: ExerciseRowProps) {
     <div style={{ border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: 'var(--sp-3) var(--sp-4)', display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', background: 'var(--color-surface)' }}>
       <div className="flex items-center justify-between">
         <div>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.9375rem' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9375rem' }}>
             {ex.exercise_name}
           </span>
           <span style={{ marginLeft: 'var(--sp-2)', fontFamily: 'var(--font-display)', fontSize: '0.75rem', color: 'var(--color-text-3)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
@@ -296,7 +298,8 @@ function ProgramEditor({ programId, allExercises, onBack, onSaved }: ProgramEdit
           onClick={onBack}
           aria-label="Back to programs"
         >
-          ← Back
+          <ArrowLeft size={16} strokeWidth={1.75} aria-hidden="true" />
+          Back
         </button>
         <h1 style={{ fontSize: '1.5rem' }}>{isNew ? 'New program' : 'Edit program'}</h1>
       </div>
@@ -371,8 +374,8 @@ function ProgramEditor({ programId, allExercises, onBack, onSaved }: ProgramEdit
           className="error-banner"
           role="alert"
           style={{
-            borderColor: 'rgba(239,68,68,0.7)',
-            background: 'rgba(239,68,68,0.15)',
+            borderColor: 'rgba(var(--color-danger-rgb), 0.7)',
+            background: 'rgba(var(--color-danger-rgb), 0.15)',
             padding: 'var(--sp-4)',
           }}
         >

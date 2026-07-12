@@ -8,10 +8,11 @@
  * Chat column: message list (scrollable) + fixed input at the bottom.
  * Trace column: TracePanel consuming traceEvents; live-only, resets on refresh.
  *
- * Design: matches the existing token system (navy-charcoal bg, #FF4D00 accent,
- * Space Grotesk / Inter). User bubbles sit right-aligned; coach bubbles sit
- * left-aligned with a subtle accent-left-border to read as "system voice".
- * Streaming is signaled by a blinking cursor appended to the last coach token.
+ * Design: matches the Apple-inverted dark token system (true-black canvas,
+ * #0071e3/#2997ff accent, Inter). User bubbles sit right-aligned, filled
+ * accent; coach bubbles sit left-aligned on surface-1 with a hairline —
+ * no accent stripe. Streaming is signaled by a blinking cursor appended to
+ * the last coach token.
  */
 
 import {
@@ -21,6 +22,7 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from 'react'
+import { MessageCircle, Send } from 'lucide-react'
 import { useChatStream, type ChatMessage } from '../hooks/useChatStream'
 import { TracePanel } from '../components/TracePanel'
 
@@ -112,7 +114,9 @@ function Bubble({ message, onRetry }: BubbleProps) {
 function EmptyState() {
   return (
     <div className="empty-state" style={{ flex: 1, justifyContent: 'center' }}>
-      <div className="empty-state-icon" aria-hidden="true">💬</div>
+      <div className="empty-state-icon" aria-hidden="true">
+        <MessageCircle size={40} strokeWidth={1.5} />
+      </div>
       <h3>Ask your coach</h3>
       <p>
         Ask about your workouts, progression, nutrition, or training principles.
@@ -205,21 +209,7 @@ export function Chat() {
               {isStreaming ? (
                 <span className="spinner" style={{ width: 16, height: 16 }} />
               ) : (
-                /* Simple send arrow */
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M2 8L14 2L8 14L7 9L2 8Z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Send size={16} strokeWidth={1.75} aria-hidden="true" />
               )}
             </button>
           </form>

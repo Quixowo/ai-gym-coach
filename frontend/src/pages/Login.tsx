@@ -34,7 +34,7 @@ export function Login() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-header">
-          <div className="auth-brand">HeyCoach</div>
+          <div className="auth-brand">Hey<span className="auth-brand-accent">Coach</span></div>
           <h1>Log in</h1>
           <p className="text-sm text-muted">Track your lifts and beat last week.</p>
         </div>

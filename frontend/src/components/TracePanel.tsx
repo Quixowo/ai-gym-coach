@@ -24,6 +24,7 @@
  */
 
 import { useEffect, useRef } from 'react'
+import { Check, X, Activity } from 'lucide-react'
 import type { TraceEvent } from '../hooks/useChatStream'
 
 // ---- Individual event rows ----
@@ -51,7 +52,9 @@ function ToolCallStartedRow({ event }: TraceRowProps) {
 function ToolCallCompletedRow({ event }: TraceRowProps) {
   return (
     <div className="trace-row trace-row--completed" role="listitem">
-      <span className="trace-check" aria-label="completed">✓</span>
+      <span className="trace-check" aria-label="completed">
+        <Check size={14} strokeWidth={2.5} />
+      </span>
       <div className="trace-row-body">
         <span className="trace-tool-name">{event.tool ?? 'unknown'}</span>
         {event.latency_ms != null && (
@@ -98,7 +101,9 @@ function TurnCompleteRow({ event }: TraceRowProps) {
 function ErrorRow({ event }: TraceRowProps) {
   return (
     <div className="trace-row trace-row--error" role="listitem" aria-live="assertive">
-      <span className="trace-error-flag" aria-label="error">✕</span>
+      <span className="trace-error-flag" aria-label="error">
+        <X size={14} strokeWidth={2.5} />
+      </span>
       <div className="trace-row-body">
         <span className="trace-label trace-label--error">Agent error</span>
         {event.message && (
@@ -114,7 +119,9 @@ function ErrorRow({ event }: TraceRowProps) {
 function TracePanelEmpty() {
   return (
     <div className="trace-empty">
-      <div className="trace-empty-icon" aria-hidden="true">⬡</div>
+      <div className="trace-empty-icon" aria-hidden="true">
+        <Activity size={28} strokeWidth={1.5} />
+      </div>
       <p className="trace-empty-text">Agent activity will appear here</p>
     </div>
   )
