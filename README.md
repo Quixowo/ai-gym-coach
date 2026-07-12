@@ -1,24 +1,17 @@
 # HeyCoach — an agentic AI weightlifting coach
 
 A weightlifting tracker (sets / reps / RIR) with an **agentic coach** layered on top.
-Built as an AI/ML engineering portfolio project: the interesting engineering is the
-agent architecture — tool design, retrieval-augmented generation, guardrails, and a
-recorded eval harness — not the UI.
 
 The coach can discuss your own logged training data, adjust your saved programs
-(within safety limits), and answer grounded training / injury-prevention questions
-with cited sources. Nutrition is advisory chat only — by deliberate scope choice
-there is no nutrition logging.
+(within safety limits), and answer grounded training / injury-prevention / nutrition questions. 
 
 ## Architecture at a glance
 
-- **Hand-rolled agent loop** on the raw Anthropic SDK (no LangGraph / orchestration
-  framework). Claude Sonnet drives the loop; Claude Haiku handles the cheap
-  classification / synthesis calls. A hard cap on tool-call iterations per turn is the
-  sole loop-safety mechanism.
+- **Hand-rolled agent loop** on the raw Anthropic SDK. Claude Sonnet drives the loop;
+  Claude Haiku handles the cheap classification / synthesis calls.
+  A hard cap on tool-call iterations per turn is used as the loop-safety mechanism.
 - **Seven tools**, all server-executed. The verified user id is injected server-side
-  from the JWT before any tool runs and is *never* an LLM-supplied argument — this
-  structural scoping is the project's primary prompt-injection defense.
+  from the JWT before any tool runs and is *never* an LLM-supplied argument.
 - **Deterministic logic lives in code, not the model**: progression math (Epley 1RM,
   RIR trend, plateau detection), fuzzy exercise-name matching, and the 10% program
   load-jump cap are all enforced in tool implementations.
@@ -34,9 +27,6 @@ there is no nutrition logging.
 **Stack:** FastAPI (async) · React + Vite · Postgres + pgvector · Upstash Redis ·
 Anthropic API · Voyage embeddings (`voyage-4-lite`). Local dev on Docker Compose;
 deploy on Render (backend) + Vercel (frontend).
-
-See `BUILD_SPEC.md` for the full data model, tool specs, and phased build plan, and
-`CLAUDE.md` for the non-negotiable architecture invariants.
 
 ## The eval suite — what it does and doesn't verify
 
