@@ -1,0 +1,14 @@
+{
+  "id": "mem_08_physical_context_stated_fact",
+  "hand_authored": false,
+  "user_message": "My left shoulder tends to feel achy when I do overhead pressing, so I've been going lighter on those.",
+  "assistant_reply": "Thanks for flagging that — we'll keep overhead pressing conservative and lean on variations that feel better on that shoulder.",
+  "recorded_reply": "```json\n[\n  {\n    \"category\": \"physical_context\",\n    \"topic_key\": \"left_shoulder_overhead_pressing\",\n    \"content\": \"User has said their left shoulder feels achy during overhead pressing.\"\n  }\n]\n```",
+  "expected": [
+    {
+      "category": "physical_context",
+      "topic_key": "left_shoulder_overhead_pressing",
+      "content": "User has said their left shoulder feels achy during overhead pressing."
+    }
+  ]
+}

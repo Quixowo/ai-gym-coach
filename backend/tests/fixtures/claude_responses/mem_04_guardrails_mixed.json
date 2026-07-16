@@ -1,0 +1,19 @@
+{
+  "id": "mem_04_guardrails_mixed",
+  "hand_authored": true,
+  "user_message": "A few things about me: I eat a lot of protein, I sleep about six hours a night, and I really prefer free weights.",
+  "assistant_reply": "Got it — I'll keep your preferences in mind as we plan your training.",
+  "recorded_reply": "[{\"category\": \"nutrition\", \"topic_key\": \"protein_intake\", \"content\": \"User eats a lot of protein.\"}, {\"category\": \"goals\", \"topic_key\": \"\", \"content\": \"Missing a topic key.\"}, \"this row is a bare string, not an object\", {\"category\": \"preferences\", \"topic_key\": \"equipment_preference\", \"content\": \"User prefers training with free weights over machines because they find barbell and dumbbell movements more engaging and more effective for building overall strength and muscle, and they especially enjoy the big compound lifts like the squat, deadlift, bench press, and overhead press across their whole training week.\"}, {\"category\": \"lifestyle\", \"topic_key\": \"Sleep Schedule\", \"content\": \"User sleeps about six hours a night.\"}]",
+  "expected": [
+    {
+      "category": "preferences",
+      "topic_key": "equipment_preference",
+      "content": "User prefers training with free weights over machines because they find barbell and dumbbell movements more engaging and more effective for building overall strength and muscle, and they especially enjoy the big compound lifts like the squat, deadlift, bench press, and overhead press across their wh"
+    },
+    {
+      "category": "lifestyle",
+      "topic_key": "sleep_schedule",
+      "content": "User sleeps about six hours a night."
+    }
+  ]
+}

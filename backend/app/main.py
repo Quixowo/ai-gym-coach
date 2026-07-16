@@ -8,7 +8,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from sqlalchemy import text
 
-from app.api.routes import auth, chat, exercises, programs, workouts
+from app.api.routes import auth, chat, exercises, memories, programs, workouts
 from app.core.config import settings
 from app.core.rate_limit import limiter
 from app.db.session import engine
@@ -36,6 +36,7 @@ app.include_router(exercises.router)
 app.include_router(workouts.router)
 app.include_router(programs.router)
 app.include_router(chat.router)
+app.include_router(memories.router)
 
 
 @app.get("/health")

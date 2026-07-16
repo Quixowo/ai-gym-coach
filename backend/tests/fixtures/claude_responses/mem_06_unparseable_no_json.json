@@ -1,0 +1,8 @@
+{
+  "id": "mem_06_unparseable_no_json",
+  "hand_authored": true,
+  "user_message": "What's the weather like where you are?",
+  "assistant_reply": "I'm just your coach in the app, but let's talk training whenever you're ready.",
+  "recorded_reply": "There are no durable user facts to extract from this turn.",
+  "expected": []
+}

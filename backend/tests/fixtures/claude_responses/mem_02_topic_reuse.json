@@ -1,0 +1,17 @@
+{
+  "id": "mem_02_topic_reuse",
+  "hand_authored": false,
+  "user_message": "I just picked up a 35 lb kettlebell to add to my home gym.",
+  "assistant_reply": "A kettlebell is a great addition — swings, goblet squats, and carries all open up now.",
+  "recorded_reply": "```json\n[\n  {\n    \"category\": \"equipment\",\n    \"topic_key\": \"home_equipment\",\n    \"content\": \"User has a 35 lb kettlebell in their home gym.\"\n  }\n]\n```",
+  "expected": [
+    {
+      "category": "equipment",
+      "topic_key": "home_equipment",
+      "content": "User has a 35 lb kettlebell in their home gym."
+    }
+  ],
+  "existing_keys": [
+    "home_equipment"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "mem_05_prose_wrapped",
+  "hand_authored": true,
+  "user_message": "I hate running, honestly I'd rather just lift.",
+  "assistant_reply": "Totally fair — we can keep conditioning to low-impact work you'll actually do.",
+  "recorded_reply": "Here are the durable facts I found in this turn:\n\n```json\n[{\"category\": \"preferences\", \"topic_key\": \"cardio_preference\", \"content\": \"User dislikes running and prefers lifting for conditioning.\"}]\n```\n\nLet me know if you'd like anything else.",
+  "expected": [
+    {
+      "category": "preferences",
+      "topic_key": "cardio_preference",
+      "content": "User dislikes running and prefers lifting for conditioning."
+    }
+  ]
+}

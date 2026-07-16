@@ -99,6 +99,14 @@ export function useChatStream(): UseChatStreamReturn {
   const [traceEvents, setTraceEvents] = useState<TraceEvent[]>([])
   const [status, setStatus] = useState<ChatStatus>('idle')
 
+  // One id per chat mount, sent with every /chat request so the backend's
+  // episodic-memory pipeline can group this chat's extracted observations.
+  // Generated once via useRef (not state — it never needs to trigger a
+  // re-render); a page refresh naturally starts a new chat/new id, which is
+  // already this app's session boundary, so there's no explicit "new chat"
+  // action to regenerate it from.
+  const conversationId = useRef<string>(crypto.randomUUID())
+
   // Parallel ref to messages so we can read the current list synchronously
   // without relying on stale closure captures.
   const messagesRef = useRef<ChatMessage[]>([])
@@ -148,6 +156,7 @@ export function useChatStream(): UseChatStreamReturn {
         body: JSON.stringify({
           message: userText,
           history: historySnapshot,
+          conversation_id: conversationId.current,
         }),
       })
 

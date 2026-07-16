@@ -41,5 +41,12 @@ class Settings(BaseSettings):
     COOKIE_SAMESITE: str = "lax"
     COOKIE_SECURE: bool = False
 
+    # Episodic memory pipeline
+    # Distinct conversations a (user, topic_key) must appear in before its
+    # observations are consolidated into a durable user_memories row.
+    MEMORY_CONSOLIDATION_THRESHOLD: int = 3
+    # Max consolidated memories injected into the system prompt per turn.
+    MEMORY_MAX_INJECTED: int = 15
+
 
 settings = Settings()

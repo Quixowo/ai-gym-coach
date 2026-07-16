@@ -1,0 +1,24 @@
+{
+  "id": "mem_01_rich_facts",
+  "hand_authored": false,
+  "user_message": "I train at home with adjustable dumbbells up to 50 lbs and a pull-up bar, usually Monday, Wednesday, and Friday mornings before work. My main goal right now is putting on muscle in my arms and shoulders.",
+  "assistant_reply": "Nice setup — dumbbells and a pull-up bar cover a lot. With three mornings a week we can build a solid upper-body focused split around that arm and shoulder goal.",
+  "recorded_reply": "```json\n[\n  {\n    \"category\": \"equipment\",\n    \"topic_key\": \"home_gym_equipment\",\n    \"content\": \"User trains at home with adjustable dumbbells up to 50 lbs and a pull-up bar.\"\n  },\n  {\n    \"category\": \"schedule\",\n    \"topic_key\": \"training_days\",\n    \"content\": \"User trains Monday, Wednesday, and Friday mornings before work.\"\n  },\n  {\n    \"category\": \"goals\",\n    \"topic_key\": \"primary_goal\",\n    \"content\": \"User's main goal is putting on muscle in the arms and shoulders.\"\n  }\n]\n```",
+  "expected": [
+    {
+      "category": "equipment",
+      "topic_key": "home_gym_equipment",
+      "content": "User trains at home with adjustable dumbbells up to 50 lbs and a pull-up bar."
+    },
+    {
+      "category": "schedule",
+      "topic_key": "training_days",
+      "content": "User trains Monday, Wednesday, and Friday mornings before work."
+    },
+    {
+      "category": "goals",
+      "topic_key": "primary_goal",
+      "content": "User's main goal is putting on muscle in the arms and shoulders."
+    }
+  ]
+}

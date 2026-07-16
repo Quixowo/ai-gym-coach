@@ -1,0 +1,8 @@
+{
+  "id": "mem_03_small_talk",
+  "hand_authored": false,
+  "user_message": "Thanks, that makes a lot of sense! Catch you later.",
+  "assistant_reply": "Anytime — go get after it and let me know how it goes.",
+  "recorded_reply": "```json\n[]\n```",
+  "expected": []
+}

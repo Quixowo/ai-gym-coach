@@ -1,0 +1,8 @@
+{
+  "id": "mem_07_unparseable_bad_json",
+  "hand_authored": true,
+  "user_message": "Cool, thanks!",
+  "assistant_reply": "You bet.",
+  "recorded_reply": "Nothing durable here [see: no facts, just banter].",
+  "expected": []
+}
