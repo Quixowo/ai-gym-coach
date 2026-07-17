@@ -113,3 +113,20 @@ can never become a live-API run.
 All secrets live in a gitignored root `.env` (never committed). Required:
 `ANTHROPIC_API_KEY`, `VOYAGE_API_KEY`, `DATABASE_URL` (+ Supabase service key),
 `UPSTASH_REDIS_URL`, `JWT_SECRET`.
+
+## Deployment
+
+The demo runs entirely on free tiers: Supabase (Postgres + pgvector), Upstash
+(Redis), Render (backend), and Vercel (frontend). Cross-origin cookies between
+Vercel and Render require the backend to set `COOKIE_SAMESITE=none`,
+`COOKIE_SECURE=true`, and `CORS_ORIGINS` to the frontend origin.
+
+> **Cold start:** the backend is on Render's free tier, which spins the service
+> down after ~15 minutes of inactivity. The first request after an idle period
+> takes a few seconds while it wakes back up. This is an accepted free-tier
+> tradeoff, not a bug.
+
+A scheduled GitHub Actions workflow (`.github/workflows/keep_supabase_alive.yml`)
+pings `/health` every few days so Supabase's free-tier project never hits its
+inactivity pause; `/health` runs a trivial `SELECT 1`, so the ping counts as real
+database activity.

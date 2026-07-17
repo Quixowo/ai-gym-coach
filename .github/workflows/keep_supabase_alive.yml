@@ -1,0 +1,17 @@
+name: Keep Supabase Alive
+
+# Supabase pauses free-tier projects after ~7 days of inactivity, and the pause
+# timer resets only on real database activity. /health runs a SELECT 1, so this
+# ping counts. Runs well inside the 7-day window; also dispatchable by hand.
+on:
+  schedule:
+    - cron: '0 12 */3 * *'   # every 3 days at 12:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint (touches the DB)
+        # Replace <your-render-app> with the deployed Render service subdomain.
+        run: curl -fsS https://<your-render-app>.onrender.com/health
