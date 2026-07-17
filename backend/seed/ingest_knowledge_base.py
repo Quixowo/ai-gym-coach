@@ -1,4 +1,4 @@
-"""Offline knowledge-base ingestion (spec §9.1).
+"""Offline knowledge-base ingestion.
 
 Run from ``backend/`` with::
 
@@ -8,7 +8,7 @@ Walks ``knowledge_base/{training,nutrition,injury_prevention}/*.md``, parses the
 optional citation footer, section-chunks each document, embeds every chunk via
 Voyage, and wipe-and-reloads the ``knowledge_chunks`` table. Re-run whenever the
 corpus changes; the corpus is tiny so a full wipe-and-reload is simpler and safer
-than incremental diffing (§9.1 step 6 — one transaction, converges every time).
+than incremental diffing (one transaction, converges every time).
 
 Design notes:
 - The ``knowledge_base/`` path is anchored to the repo layout via ``Path(__file__)``,
@@ -18,7 +18,7 @@ Design notes:
   :func:`chunk_document`) with no network/DB dependency, so they're unit-testable
   on fixture strings (CLAUDE.md rule 10 — no live calls in CI).
 - Embedding uses the SYNC ``voyageai.Client`` deliberately: this is a one-off
-  offline script, not the request path, so blocking is fine (§9.1). The async
+  offline script, not the request path, so blocking is fine. The async
   client is reserved for retrieval (:mod:`app.llm.voyage`).
 """
 
@@ -42,7 +42,7 @@ KNOWLEDGE_BASE_DIR = _REPO_ROOT / "knowledge_base"
 
 CATEGORIES = ("training", "nutrition", "injury_prevention")
 
-# Voyage accepts up to 128 inputs per embed call (§9.1). The corpus fits in one or
+# Voyage accepts up to 128 inputs per embed call. The corpus fits in one or
 # two batches today, but batch anyway so growth past 128 chunks needs no code change.
 EMBED_BATCH_SIZE = 128
 
@@ -52,7 +52,7 @@ class Chunk:
     """One section-chunk ready for embedding + insertion.
 
     ``text`` is the full ``"# title\n## heading\n{body}"`` string that is BOTH
-    stored in ``chunk_text`` and embedded (§9.1 step 3) — heading provenance travels
+    stored in ``chunk_text`` and embedded — heading provenance travels
     with the chunk so the embedding has context and Haiku can cite it.
     """
 
@@ -80,7 +80,7 @@ class ParsedDocument:
 def parse_document(raw: str) -> ParsedDocument:
     """Strip the citation footer and split off the ``# title`` from a raw markdown doc.
 
-    Footer convention (§9.4): a final ``---`` line followed by one or more lines
+    Footer convention: a final ``---`` line followed by one or more lines
     starting ``Source: ``. The footer is stripped from the text and the Source lines
     are joined with ``"; "`` into ``source_citation``. Parsed uniformly wherever a
     footer appears (only expected in injury_prevention, but not category-gated); a
@@ -141,11 +141,11 @@ def _split_footer(raw: str) -> tuple[str, str | None]:
 def chunk_document(raw: str, category: str) -> list[Chunk]:
     """Parse + section-chunk a raw markdown doc into ordered :class:`Chunk` objects.
 
-    Chunking (§9.1 step 2): the doc body is split on ``## `` headings; each section
+    The doc body is split on ``## `` headings; each section
     becomes one chunk with ``chunk_index`` = its 0-based position. Non-empty prose
     between the ``# `` title and the first ``##`` is kept as its own leading
     (preamble) chunk — never silently dropped — using the document title as its
-    heading (§9.1 step 3, leading-chunk rule). The footer citation (if any) is
+    heading (leading-chunk rule). The footer citation (if any) is
     attached to every chunk of the document.
     """
     doc = parse_document(raw)
@@ -222,7 +222,7 @@ def _read_corpus(base_dir: Path) -> list[Chunk]:
 
 
 def _embed_chunks(chunks: list[Chunk]) -> list[list[float]]:
-    """Embed chunk texts via the SYNC Voyage client, in ≤128-input batches (§9.1)."""
+    """Embed chunk texts via the SYNC Voyage client, in ≤128-input batches."""
     vo = voyageai.Client(api_key=settings.VOYAGE_API_KEY or None)
     embeddings: list[list[float]] = []
     for start in range(0, len(chunks), EMBED_BATCH_SIZE):
@@ -237,7 +237,7 @@ def _embed_chunks(chunks: list[Chunk]) -> list[list[float]]:
 
 
 async def _wipe_and_reload(chunks: list[Chunk], embeddings: list[list[float]]) -> None:
-    """Delete all existing rows and insert the fresh set in one transaction (§9.1)."""
+    """Delete all existing rows and insert the fresh set in one transaction."""
     async with async_session_maker() as session:
         await session.execute(delete(KnowledgeChunk))
         session.add_all(

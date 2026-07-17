@@ -1,6 +1,13 @@
 # Secrets — never commit
 .env
 
+# Markdown: local working docs stay untracked — only READMEs are committed
+*.md
+!README*.md
+
+# Knowledge base content is authored and ingested locally, never committed
+knowledge_base/
+
 # Python
 .venv/
 __pycache__/

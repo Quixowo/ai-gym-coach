@@ -1,15 +1,15 @@
-"""Workout session / set-entry service (spec §5.4, §5.5, §8.2).
+"""Workout session / set-entry service.
 
 Single source of truth for the workout write/read path, shared by the REST
 endpoints (Phase 3) and the ``log_set`` / ``get_workout_history`` agent tools
 (Phase 4). Every function that touches user data takes ``user_id`` as an explicit
 argument and filters on it — this is the project's application-level access
-control (spec §6.3, CLAUDE.md rule 2/9): a caller-supplied session or set id is
+control (CLAUDE.md rule 2/9): a caller-supplied session or set id is
 never trusted without also matching ``user_id``, so a cross-user reference
 surfaces as :class:`NotFoundError` (404), never a leak.
 
 Deterministic logic lives here, not in the model's judgment (CLAUDE.md rule 3):
-§5.5 field validation, the §8.2 open-session find-or-create, and the per-exercise
+field validation, the open-session find-or-create, and the per-exercise
 ``set_number`` computation are all done in code.
 """
 
@@ -33,7 +33,7 @@ DEFAULT_HISTORY_LIMIT = 50
 async def _get_open_session(db: AsyncSession, user_id: uuid.UUID) -> WorkoutSession | None:
     """Return the user's single open session, or None (application-level access control).
 
-    The §8.2 invariant is "at most one open session per user", so this expects 0
+    The invariant is "at most one open session per user", so this expects 0
     or 1 rows. If more than one somehow exists, the most recent is returned so the
     write path stays usable rather than erroring.
     """
@@ -53,9 +53,9 @@ async def log_set(
     reps: int,
     rir: float | None = None,
 ) -> SetEntry:
-    """Log one completed set, resolving the target session per spec §8.2.
+    """Log one completed set, resolving the target session.
 
-    Validates weight/reps/rir in-service (§5.5) before any write. Verifies the
+    Validates weight/reps/rir in-service before any write. Verifies the
     exercise exists (structured :class:`NotFoundError`, never a raw FK
     ``IntegrityError``). Resolves the session: exactly-one-open -> attach; none ->
     create a new ``status="open"`` session dated today. ``set_number`` is computed
@@ -83,7 +83,7 @@ async def log_set(
         # committing yet — both rows commit together at the end.
         await db.flush()
 
-    # set_number = max existing for this exercise in this session + 1 (§8.2).
+    # set_number = max existing for this exercise in this session + 1.
     max_set_number = (
         await db.execute(
             select(func.max(SetEntry.set_number)).where(
@@ -162,7 +162,7 @@ async def start_session(
     program_id: uuid.UUID | None = None,
     notes: str | None = None,
 ) -> WorkoutSession:
-    """Start a new open session; refuse if one is already open (spec §8.2).
+    """Start a new open session; refuse if one is already open.
 
     Enforces the "at most one open session per user" invariant: raises
     :class:`ConflictError` (routes -> HTTP 409) if the user already has an open

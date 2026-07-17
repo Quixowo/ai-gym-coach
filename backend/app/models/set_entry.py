@@ -14,7 +14,7 @@ class SetEntry(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     session_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workout_sessions.id"), index=True)
-    # Denormalized from workout_sessions.user_id (spec §5 note): lets every
+    # Denormalized from workout_sessions.user_id: lets every
     # access-control query filter with a single WHERE set_entries.user_id = :uid,
     # no join required — making the filter structural, not remembered.
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True)
@@ -26,7 +26,7 @@ class SetEntry(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (
-        # Exact access pattern for get_workout_history and analyze_progression (§8).
+        # Exact access pattern for get_workout_history and analyze_progression.
         Index(
             "ix_set_entries_user_exercise_created",
             "user_id",

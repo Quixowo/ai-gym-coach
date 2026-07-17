@@ -1,4 +1,4 @@
-"""Pydantic response models for the exercise catalog endpoints (spec §12)."""
+"""Pydantic response models for the exercise catalog endpoints."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ class ExerciseResponse(BaseModel):
 
 
 class ExerciseMatch(BaseModel):
-    """One fuzzy-search candidate (spec §8.5). Mirrors the service dict shape."""
+    """One fuzzy-search candidate. Mirrors the service dict shape."""
 
     exercise_id: str
     name: str

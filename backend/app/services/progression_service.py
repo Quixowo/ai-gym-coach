@@ -1,11 +1,11 @@
-"""Progression-analysis service (spec §8.6).
+"""Progression-analysis service.
 
 The single, deterministic implementation behind the ``analyze_progression`` agent
 tool. Per CLAUDE.md rule 3 the progression math (Epley 1RM, first-half/second-half
 trend, RIR trend at comparable load, plateau detection) lives here in code — the
 LLM is never trusted to eyeball raw set data. No LLM calls happen in this module.
 
-Access control (spec §6.3): every query filters on ``user_id``, so another user's
+Access control: every query filters on ``user_id``, so another user's
 ``exercise_id`` (or an exercise with no history for this user) simply yields the
 empty/no-data shape — never a leak.
 """
@@ -26,7 +26,7 @@ from app.services.errors import NotFoundError
 
 DEFAULT_LOOKBACK_SESSIONS = 10
 
-# §8.6 tunable thresholds — kept as module constants so tests can assert boundaries.
+# Tunable thresholds — kept as module constants so tests can assert boundaries.
 TREND_THRESHOLD = 0.02  # >2% mean change -> increasing/decreasing, else flat
 COMPARABLE_LOAD_TOLERANCE = 0.05  # ±5% of the most common top-set weight
 MIN_COMPARABLE_SESSIONS = 3  # fewer than this -> RIR "insufficient_data"
@@ -34,7 +34,7 @@ PLATEAU_MIN_SESSIONS = 3  # last N identical top sets -> plateaued
 
 
 def estimated_1rm(weight: float, reps: int) -> float:
-    """Epley estimated 1RM: ``weight * (1 + reps / 30)`` (spec §8.6)."""
+    """Epley estimated 1RM: ``weight * (1 + reps / 30)``."""
     return weight * (1 + reps / 30)
 
 
@@ -95,7 +95,7 @@ async def analyze(
     exercise_id: uuid.UUID,
     lookback_sessions: int = DEFAULT_LOOKBACK_SESSIONS,
 ) -> dict:
-    """Compute the §8.6 progression metrics for one user + exercise.
+    """Compute the progression metrics for one user + exercise.
 
     Pulls up to ``lookback_sessions`` most-recent sessions that contain at least one
     set of this exercise (sessions with none are skipped), takes each session's top
@@ -109,7 +109,7 @@ async def analyze(
     - ``plateaued`` / ``plateau_session_count``: the trailing run of sessions whose
       top set has identical weight×reps×RIR, flagged when that run is >= 3.
 
-    Returns the §8.6 dict. Raises :class:`NotFoundError` if the exercise id is unknown
+    Returns the metrics dict above. Raises :class:`NotFoundError` if the exercise id is unknown
     (application-level access control makes "not the user's data" indistinguishable
     from "no data": a known exercise with no logged sets returns the empty shape with
     ``sessions_analyzed == 0``).
@@ -193,7 +193,7 @@ async def analyze(
 
 
 def _compute_rir_trend(ordered: Sequence[_SessionTopSet]) -> str:
-    """RIR trend at comparable load (spec §8.6 step 4).
+    """RIR trend at comparable load.
 
     Restrict to sessions whose top-set weight is within ±5% of the *most common*
     top-set weight, drop any with a missing RIR, and apply the first-half/second-half
@@ -219,7 +219,7 @@ def _compute_rir_trend(ordered: Sequence[_SessionTopSet]) -> str:
 
 
 def _detect_plateau(ordered: Sequence[_SessionTopSet]) -> tuple[bool, int]:
-    """Plateau detection (spec §8.6 step 5): trailing run of identical top sets.
+    """Plateau detection: trailing run of identical top sets.
 
     Walks backward from the newest session counting sessions whose top set has an
     identical ``(weight, reps, rir)`` triple. ``plateaued`` is True when that run is
@@ -240,7 +240,7 @@ def _detect_plateau(ordered: Sequence[_SessionTopSet]) -> tuple[bool, int]:
 
 
 def _empty_shape(exercise_name: str) -> dict:
-    """The no-data §8.6 shape for a known exercise the user has never logged."""
+    """The no-data metrics shape for a known exercise the user has never logged."""
     return {
         "exercise": exercise_name,
         "sessions_analyzed": 0,

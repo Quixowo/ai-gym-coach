@@ -17,7 +17,7 @@ class WorkoutSession(Base):
     # Nullable — freeform sessions (no program) are allowed.
     program_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("programs.id"))
     date: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    # "open" | "finished" — drives log_set's find-or-create (§8.2).
+    # "open" | "finished" — drives log_set's find-or-create.
     status: Mapped[str] = mapped_column(default="open")
     notes: Mapped[str | None]
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

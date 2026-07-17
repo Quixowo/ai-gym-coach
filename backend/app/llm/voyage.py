@@ -1,11 +1,11 @@
-"""Shared Voyage async client (spec §9.2).
+"""Shared Voyage async client.
 
 The mirror image of :mod:`app.llm.client` for the retrieval path: a single
 lazily-constructed :class:`voyageai.AsyncClient`, reused by
 ``knowledge_service.search_knowledge_base`` to embed the incoming query. The async
 client is aiohttp-based, so ``await vo.embed(...)`` never blocks the event loop and
 stalls the concurrent SSE streams (the sync ``voyageai.Client`` would — hence the
-async client here, and the sync one only in the offline ingestion script, §9.1).
+async client here, and the sync one only in the offline ingestion script).
 
 Two reasons this is the single construction site:
 

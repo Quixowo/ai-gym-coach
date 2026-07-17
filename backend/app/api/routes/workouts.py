@@ -1,7 +1,7 @@
-"""Workout session / set-entry endpoints (spec §12).
+"""Workout session / set-entry endpoints.
 
 Every endpoint is behind ``get_current_user`` and passes the resolved ``user_id``
-explicitly into ``workout_service`` (application-level access control, spec §6.3)
+explicitly into ``workout_service`` (application-level access control)
 — the service filters on it, so a cross-user session id 404s rather than leaking.
 
 Service domain exceptions are translated to HTTP status here: ``ValidationError``
@@ -58,7 +58,7 @@ async def start_session(
 ) -> SessionResponse:
     """Start a new open session (manual "start workout").
 
-    Returns 409 if the user already has an open session (spec §8.2 at-most-one
+    Returns 409 if the user already has an open session (at-most-one
     invariant).
     """
     try:
@@ -96,8 +96,8 @@ async def log_set(
 ) -> SetEntryResponse:
     """Log a set — same ``workout_service.log_set`` the ``log_set`` tool calls.
 
-    Session resolution and ``set_number`` are computed server-side (§8.2). Field
-    validation runs in-service (§5.5); an unknown ``exercise_id`` returns a
+    Session resolution and ``set_number`` are computed server-side. Field
+    validation runs in-service; an unknown ``exercise_id`` returns a
     structured 404, never a 500.
     """
     try:

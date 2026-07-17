@@ -27,7 +27,7 @@ class ServiceError(Exception):
 
 
 class ValidationError(ServiceError):
-    """Input failed a service-layer validation rule (spec §5.5).
+    """Input failed a service-layer validation rule.
 
     Routes translate this to HTTP 422. Raised in addition to (not instead of)
     the mirrored Pydantic constraints, because the agent tool path constructs
@@ -39,8 +39,8 @@ class NotFoundError(ServiceError):
     """A referenced row does not exist, or is not owned by the current user.
 
     Cross-user access is deliberately reported as "not found" rather than
-    "forbidden" so ownership is never leaked (application-level access control,
-    spec §6.3). Routes translate this to HTTP 404.
+    "forbidden" so ownership is never leaked (application-level access control).
+    Routes translate this to HTTP 404.
     """
 
 
@@ -52,7 +52,7 @@ class ConflictError(ServiceError):
 
 
 class LoadJumpCapError(ValidationError):
-    """A program update would raise a target weight beyond the 10% cap (§10.2).
+    """A program update would raise a target weight beyond the 10% cap.
 
     Subclasses :class:`ValidationError` so it maps to HTTP 422 like any other
     rejected write. Carries the exercise / prior / requested values so both the

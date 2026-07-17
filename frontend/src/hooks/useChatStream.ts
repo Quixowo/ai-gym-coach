@@ -2,7 +2,7 @@
  * useChatStream — streams POST /chat, parses SSE frames, exposes chat state.
  *
  * Transport: fetch-based stream reader (NOT EventSource) because /chat is a
- * POST with a JSON body and requires cookies.  See BUILD_SPEC.md §13.
+ * POST with a JSON body and requires cookies.
  *
  * Frame format from backend:
  *   data: {"type":"text_delta","text":"..."}\n\n

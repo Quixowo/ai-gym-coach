@@ -1,6 +1,6 @@
-"""Workout session / set-entry endpoint tests (spec §5.5, §8.2, §12).
+"""Workout session / set-entry endpoint tests.
 
-Covers the §5.5 validation matrix, the §8.2 session find-or-create + set_number
+Covers the validation matrix, the session find-or-create + set_number
 computation, the at-most-one-open-session 409, finish->start, history filtering
 and ordering, and the auth guard. The catalog is seeded by conftest.
 """
@@ -44,7 +44,7 @@ def test_endpoints_require_auth(client: TestClient) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# log_set happy path + session resolution (§8.2)
+# log_set happy path + session resolution
 # --------------------------------------------------------------------------- #
 def test_log_set_creates_open_session_and_second_attaches(client: TestClient) -> None:
     register_user(client)
@@ -88,7 +88,7 @@ def test_log_set_rir_optional(client: TestClient) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# §5.5 validation rejections
+# Validation rejections
 # --------------------------------------------------------------------------- #
 @pytest.mark.parametrize(
     "weight,reps,rir",
@@ -126,7 +126,7 @@ def test_log_set_unknown_exercise_is_structured_404_not_500(client: TestClient) 
 
 
 # --------------------------------------------------------------------------- #
-# Session lifecycle: 409 when open, finish then start (§8.2)
+# Session lifecycle: 409 when open, finish then start
 # --------------------------------------------------------------------------- #
 def test_start_session_conflicts_when_open_exists(client: TestClient) -> None:
     register_user(client)
@@ -167,7 +167,7 @@ def test_finish_nonexistent_session_404(client: TestClient) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# History filtering + ordering (§8.1)
+# History filtering + ordering
 # --------------------------------------------------------------------------- #
 def test_history_filter_by_exercise(client: TestClient) -> None:
     register_user(client)

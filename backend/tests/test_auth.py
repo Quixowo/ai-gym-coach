@@ -1,4 +1,4 @@
-"""Auth endpoint tests (spec §6.1).
+"""Auth endpoint tests.
 
 Covers the full session lifecycle plus the security-relevant negative paths:
 no user enumeration on login, token-type enforcement (a refresh token must not

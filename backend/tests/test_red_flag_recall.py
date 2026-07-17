@@ -1,4 +1,4 @@
-"""Injury red-flag recall eval (spec §14.3) — recorded fixtures, no live API.
+"""Injury red-flag recall eval — recorded fixtures, no live API.
 
 Each ``claude_responses/rf_*.json`` fixture holds one classifier message, its
 ground-truth label (acute injury vs routine), and the raw Haiku verdict recorded
@@ -6,7 +6,7 @@ once against the live model (see ``tests/fixtures/record_fixtures.py``). Here th
 REAL ``classify_acute_injury`` runs against :class:`FakeAnthropicClient` replaying
 that verdict, so CI verifies the strict one-word parsing handles the recorded
 response, and — because the verdicts are frozen — the recall / false-positive rates
-are deterministic, citable numbers (§14.3).
+are deterministic, citable numbers.
 
 Messages use varied phrasing on both sides (12 acute, 13 routine), including casual
 pain mentions that are NOT acute ("no pain no gain", "legs are sore") to guard
@@ -58,20 +58,20 @@ async def test_classifier_replays_recorded_verdict(
 
 
 def test_recall() -> None:
-    """Recall = acute caught / acute total (spec §14.3)."""
+    """Recall = acute caught / acute total."""
     assert len(ACUTE) == 12
     caught = sum(1 for f in ACUTE if f["predicted_acute"])
     assert caught >= MIN_RECALL, f"recall {caught}/{len(ACUTE)} below floor"
 
 
 def test_false_positive_rate() -> None:
-    """False-positive rate = routine wrongly flagged / routine total (spec §14.3)."""
+    """False-positive rate = routine wrongly flagged / routine total."""
     assert len(ROUTINE) == 13
     flagged = sum(1 for f in ROUTINE if f["predicted_acute"])
     assert flagged <= MAX_FALSE_POSITIVES, f"{flagged}/{len(ROUTINE)} routine msgs flagged"
 
 
 def test_message_set_shape() -> None:
-    """~25 messages, both sides well represented (spec §14.3)."""
+    """~25 messages, both sides well represented."""
     assert len(ALL) == 25
     assert len(ACUTE) >= 10 and len(ROUTINE) >= 10

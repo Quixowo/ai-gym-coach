@@ -1,9 +1,9 @@
-"""Tool schemas sent to Claude (spec §8.1–8.7).
+"""Tool schemas sent to Claude.
 
 The seven tools available to the agent loop: the six non-RAG tools plus the RAG
-tool ``search_knowledge_base`` (§8.7, added in Phase 5).
+tool ``search_knowledge_base`` (added in Phase 5).
 
-Invariant (CLAUDE.md rule 2 / spec §6.5): **no ``user_id`` — or any user-scoping
+Invariant (CLAUDE.md rule 2): **no ``user_id`` — or any user-scoping
 field — appears in any schema below.** There is nothing for the model to set even
 under adversarial prompting; the orchestrator injects the verified ``user_id`` into
 every handler at execution time, from the JWT-resolved session. Do not add a user
@@ -141,7 +141,7 @@ SEARCH_KNOWLEDGE_BASE_TOOL = {
     },
 }
 
-# The full tool list handed to Claude every turn (§8.1–8.7).
+# The full tool list handed to Claude every turn.
 ALL_TOOL_DEFINITIONS = [
     GET_WORKOUT_HISTORY_TOOL,
     LOG_SET_TOOL,

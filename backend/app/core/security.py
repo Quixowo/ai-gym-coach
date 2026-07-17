@@ -1,10 +1,10 @@
 """Password hashing and JWT token handling.
 
 Two concerns live here, both deliberately hand-rolled (no ``fastapi-users`` /
-auth framework — spec §6.1):
+auth framework):
 
 - **Password hashing** via Argon2id (``argon2-cffi``), the current recommended
-  default over bcrypt (spec §6.2). The plaintext password is never logged or
+  default over bcrypt. The plaintext password is never logged or
   persisted — only the hash returned by ``hash_password`` is stored.
 - **JWT** encode/decode via ``PyJWT`` (HS256, ``settings.JWT_SECRET``). Every
   token carries a ``type`` claim (``"access"`` | ``"refresh"``) in addition to
@@ -77,7 +77,7 @@ def _create_token(user_id: uuid.UUID | str, token_type: TokenType, expires_delta
 
 
 def create_access_token(user_id: uuid.UUID | str) -> str:
-    """Mint a short-lived access token (``type="access"``, spec §6.1)."""
+    """Mint a short-lived access token (``type="access"``)."""
     return _create_token(
         user_id,
         "access",
@@ -86,7 +86,7 @@ def create_access_token(user_id: uuid.UUID | str) -> str:
 
 
 def create_refresh_token(user_id: uuid.UUID | str) -> str:
-    """Mint a long-lived refresh token (``type="refresh"``, spec §6.1)."""
+    """Mint a long-lived refresh token (``type="refresh"``)."""
     return _create_token(
         user_id,
         "refresh",

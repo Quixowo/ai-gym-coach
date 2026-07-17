@@ -1,6 +1,6 @@
-"""Pydantic request/response models for the workout endpoints (spec §5.4, §5.5, §12).
+"""Pydantic request/response models for the workout endpoints.
 
-The ``LogSetRequest`` field constraints mirror the §5.5 rules enforced in
+The ``LogSetRequest`` field constraints mirror the rules enforced in
 ``workout_service.log_set`` (via ``services.validation``). This duplication is
 intentional: the schema gives the REST path an early, well-formed 422, while the
 service copy is the real guard on the agent tool path, which bypasses this model.
@@ -63,7 +63,7 @@ class SetEntryResponse(BaseModel):
 
 
 class HistoryEntryResponse(BaseModel):
-    """A logged set plus its exercise display name (spec §8.1 join)."""
+    """A logged set plus its exercise display name (joined)."""
 
     model_config = ConfigDict(from_attributes=True)
 

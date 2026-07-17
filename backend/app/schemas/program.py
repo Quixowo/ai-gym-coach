@@ -1,10 +1,10 @@
-"""Pydantic request/response models for the program endpoints (spec §5.3, §12).
+"""Pydantic request/response models for the program endpoints.
 
 Target-field bounds (sets/reps/rir/weight) are mirrored here as ``Field``
 constraints, matching what the service accepts. The 10% load-jump cap is NOT a
 schema concern — it is a cross-exercise, prior-vs-requested comparison that
 depends on stored state, so it lives in ``program_service.update_program``
-(§10.2) where both the REST and Phase-4 tool paths share it.
+where both the REST and Phase-4 tool paths share it.
 """
 
 from __future__ import annotations

@@ -30,7 +30,7 @@ def _register_pgvector(connection) -> None:
     """Teach SQLAlchemy's reflection about the ``vector`` type.
 
     Without this, autogenerate emits ``SAWarning: Did not recognize type
-    'vector'`` and can't diff pgvector columns (spec §5.6).
+    'vector'`` and can't diff pgvector columns.
     """
     connection.dialect.ischema_names["vector"] = pgvector.sqlalchemy.Vector
 

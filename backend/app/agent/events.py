@@ -1,8 +1,8 @@
-"""SSE stream event vocabulary (spec §11.2).
+"""SSE stream event vocabulary.
 
 The orchestrator and chat route yield these events; the chat route serializes each
 to one ``data: <json>\\n\\n`` SSE frame. The frontend trace panel switches on the
-``type`` field. Payload keys match the §11.2 table exactly:
+``type`` field. Payload keys match exactly:
 
 - ``text_delta``          -> ``{"type", "text"}``
 - ``tool_call_started``   -> ``{"type", "tools"}``

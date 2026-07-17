@@ -1,4 +1,4 @@
-"""Progression-math tests (spec §8.6) — pure computation, no LLM, no HTTP.
+"""Progression-math tests — pure computation, no LLM, no HTTP.
 
 Drives ``progression_service.analyze`` directly against a NullPool DB session,
 building multi-session histories with :func:`add_session_with_sets`. Sessions are
@@ -173,12 +173,12 @@ async def test_no_plateau_when_last_two_identical_only() -> None:
 
 
 async def test_spec_worked_example_flat_and_plateaued() -> None:
-    """The §8.6 example: series [185.2, 187.5, 190.0, 190.0, 190.0] -> flat + plateaued.
+    """Worked example: series [185.2, 187.5, 190.0, 190.0, 190.0] -> flat + plateaued.
 
     Built by choosing weights (reps=0 so e1rm == weight) that reproduce the exact
     series, with the last 3 sessions identical in weight*reps*rir. First-half mean
     (185.2, 187.5) = 186.35; second-half (190, 190) = 190 -> +1.96% < 2% -> flat.
-    Last 3 sessions identical -> plateaued, count 3. This confirms the spec's example
+    Last 3 sessions identical -> plateaued, count 3. This confirms the worked example
     is internally consistent with the stated rules.
     """
     async with session_maker() as db:

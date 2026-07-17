@@ -1,8 +1,8 @@
-"""Tool-schema invariants (spec §8, CLAUDE.md rule 2) — pure, no DB/API.
+"""Tool-schema invariants (CLAUDE.md rule 2) — pure, no DB/API.
 
 Two things are locked down here:
 
-1. ``search_knowledge_base`` (§8.7) is registered and carries exactly one input:
+1. ``search_knowledge_base`` is registered and carries exactly one input:
    ``query``.
 2. No tool schema anywhere exposes a user-scoping field. The verified user id is
    injected server-side by the orchestrator; its *structural absence* from every

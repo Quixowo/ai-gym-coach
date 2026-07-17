@@ -1,4 +1,4 @@
-"""Application rate limiting via slowapi, backed by Redis (spec §6.4).
+"""Application rate limiting via slowapi, backed by Redis.
 
 The limiter keys on the **authenticated user id** when a valid access-token
 cookie is present, falling back to the client IP for anonymous requests. This
@@ -28,7 +28,7 @@ from app.core.security import TokenError, decode_token
 # live in one place.
 CHAT_RATE_LIMIT = "20/hour"
 
-# App-wide baseline abuse protection (spec §6.4).
+# App-wide baseline abuse protection.
 DEFAULT_RATE_LIMIT = "60/minute"
 
 

@@ -1,4 +1,4 @@
-"""RAG retrieval/synthesis tests (spec §9.2/§10.3) — fully mocked, no live API.
+"""RAG retrieval/synthesis tests — fully mocked, no live API.
 
 Both provider factories are patched at their module of use
 (``app.services.knowledge_service``): a fake Voyage client returns a canned query
@@ -168,7 +168,7 @@ async def test_happy_path_returns_grounded_answer_and_sources(
         "groundedness_passed": True,
     }
 
-    # Query embedded with input_type="query" and the configured model (§9.1/§9.2).
+    # Query embedded with input_type="query" and the configured model.
     assert voyage.embed_calls == [
         {
             "texts": ["how much protein should I eat"],
@@ -176,7 +176,7 @@ async def test_happy_path_returns_grounded_answer_and_sources(
             "input_type": "query",
         }
     ]
-    # Two Haiku calls: synthesis (400) then groundedness (10) — §9.2/§10.3.
+    # Two Haiku calls: synthesis (400) then groundedness (10).
     synthesis_call, groundedness_call = anthropic_client.messages.create_calls
     assert synthesis_call["max_tokens"] == 400
     assert synthesis_call["model"] == settings.HAIKU_MODEL_ID
@@ -207,7 +207,7 @@ async def test_synthesis_prompt_contains_numbered_chunks(
 
 
 # --------------------------------------------------------------------------- #
-# Service — groundedness failure keeps sources (§9.2 fallback)
+# Service — groundedness failure keeps sources (fallback)
 # --------------------------------------------------------------------------- #
 async def test_groundedness_failure_returns_fallback_with_sources(
     monkeypatch: pytest.MonkeyPatch,

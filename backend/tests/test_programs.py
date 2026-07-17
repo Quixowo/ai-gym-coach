@@ -1,4 +1,4 @@
-"""Program endpoint tests (spec §5.3, §8.4, §10.2, §12).
+"""Program endpoint tests.
 
 Covers create, detail, update-within-cap, the 10% load-jump cap rejecting the
 whole update atomically (with prior/requested in the detail), cross-user 404, and
@@ -103,7 +103,7 @@ def test_update_over_cap_rejects_whole_update_atomically(client: TestClient) -> 
 
 
 def test_create_has_no_cap(client: TestClient) -> None:
-    """A create has no prior, so any weight is accepted (§10.2)."""
+    """A create has no prior, so any weight is accepted."""
     register_user(client)
     (ex1,) = get_exercise_ids(client, 1)
     resp = _create_program(client, [{"exercise_id": ex1, "target_weight": 500.0}])

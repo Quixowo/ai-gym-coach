@@ -1,4 +1,4 @@
-"""Agent-loop tests (spec §7.1) — mocked Anthropic client, no live API.
+"""Agent-loop tests — mocked Anthropic client, no live API.
 
 Fakes the streaming surface the orchestrator uses:
 ``client.messages.stream(...)`` returns an async context manager that is itself an
@@ -271,7 +271,7 @@ async def test_sdk_exception_yields_error_event_and_ends(
 
 
 # --------------------------------------------------------------------------- #
-# History bounding (spec §7.5)
+# History bounding
 # --------------------------------------------------------------------------- #
 async def test_history_bounded_to_last_20_turns(monkeypatch: pytest.MonkeyPatch) -> None:
     client = _FakeClient([_text_stream("ok")])

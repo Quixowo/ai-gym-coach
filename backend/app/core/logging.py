@@ -1,6 +1,6 @@
 """Minimal structured (JSON) logging to stdout with in-code secret redaction.
 
-This is a deliberately small slice of spec §11.1 — full observability
+This is a deliberately small slice of full observability — the rest
 (request IDs, latency, tool-trace correlation) lands in Phase 6. What matters
 *now* is that credentials never reach a log sink: register/login events log
 identifying fields (email, user_id) but any field named like a secret is

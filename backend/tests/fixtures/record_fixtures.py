@@ -1,4 +1,4 @@
-"""One-time live recorder for the three eval suites (spec §14).
+"""One-time live recorder for the three eval suites.
 
 Run from ``backend/``::
 
@@ -78,7 +78,7 @@ _last_embed_time = 0.0
 # --------------------------------------------------------------------------- #
 # Question banks
 # --------------------------------------------------------------------------- #
-# 15 answerable (12 training + 3 injury_prevention) + 4 traps (spec §14.2 / metrics).
+# 15 answerable (12 training + 3 injury_prevention) + 4 traps (see metrics).
 GROUNDEDNESS_QUESTIONS: list[dict] = [
     {
         "id": "grd_01_progressive_overload",
@@ -179,7 +179,7 @@ GROUNDEDNESS_QUESTIONS: list[dict] = [
     },
 ]
 
-# ~25 classifier messages, varied phrasing (spec §14.3). truth = ground-truth acute?
+# ~25 classifier messages, varied phrasing. truth = ground-truth acute?
 RED_FLAG_MESSAGES: list[dict] = [
     # --- Acute (potential injury needing evaluation) ---
     {
@@ -933,7 +933,7 @@ async def _amain(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Record eval fixtures (spec §14).")
+    parser = argparse.ArgumentParser(description="Record eval fixtures.")
     parser.add_argument(
         "--only",
         choices=["tool_correctness", "groundedness", "red_flag"],

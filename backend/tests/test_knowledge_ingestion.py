@@ -1,9 +1,9 @@
-"""Ingestion chunking/footer-parsing tests (spec §9.1/§9.4) — pure functions only.
+"""Ingestion chunking/footer-parsing tests — pure functions only.
 
 No network, no DB, and no real corpus: the ``knowledge_base/`` content is authored
 separately, so these tests run entirely on fixture markdown strings (CLAUDE.md
 rule 10 — CI must not hit live services, and must not depend on corpus files
-existing). Covers the footer convention (§9.4), section chunking, the leading
+existing). Covers the footer convention, section chunking, the leading
 preamble rule, the prepended title/heading embed format, and index ordering.
 """
 
@@ -66,7 +66,7 @@ Halve the volume.
 
 
 # --------------------------------------------------------------------------- #
-# Footer parsing (§9.4)
+# Footer parsing
 # --------------------------------------------------------------------------- #
 def test_footer_stripped_and_multiple_sources_joined() -> None:
     chunks = chunk_document(DOC_WITH_FOOTER, "injury_prevention")
@@ -101,7 +101,7 @@ def test_mid_document_rule_is_not_a_footer() -> None:
 
 
 # --------------------------------------------------------------------------- #
-# Section chunking (§9.1 steps 2-3)
+# Section chunking
 # --------------------------------------------------------------------------- #
 def test_chunks_split_on_h2_headings() -> None:
     chunks = chunk_document(DOC_NO_FOOTER, "training")
@@ -117,7 +117,7 @@ def test_preamble_between_title_and_first_h2_is_kept_as_leading_chunk() -> None:
     chunks = chunk_document(DOC_WITH_FOOTER, "injury_prevention")
     assert len(chunks) == 3
     preamble = chunks[0]
-    # The leading chunk uses the document title as its heading (§9.1 step 3).
+    # The leading chunk uses the document title as its heading.
     assert preamble.section_heading == TITLE
     assert preamble.body == "Shoulder issues are common in pressing-heavy programs."
 

@@ -1,4 +1,4 @@
-"""Replay harness shared by the three eval suites (spec §14).
+"""Replay harness shared by the three eval suites.
 
 The eval suites consume ONLY committed JSON fixtures under ``claude_responses/``
 (CLAUDE.md rule 10 — CI never calls a live model). This module turns those

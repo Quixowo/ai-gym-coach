@@ -1,4 +1,4 @@
-"""Injury red-flag classifier tests (spec §10.1) — fully mocked, no live API.
+"""Injury red-flag classifier tests — fully mocked, no live API.
 
 Patches ``get_anthropic_client`` at the classifier's import boundary with a fake
 async client whose ``messages.create`` returns a canned single-word response (or

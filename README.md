@@ -46,7 +46,7 @@ model version changes materially, re-run the recorder and re-review the fixtures
 pure-code suites (progression math, fuzzy search) need no fixtures and test real
 behavior on every run.
 
-The three suites (spec §14):
+The three suites:
 
 | Suite | File | What it asserts |
 |---|---|---|

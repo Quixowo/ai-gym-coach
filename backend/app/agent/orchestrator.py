@@ -1,10 +1,10 @@
-"""The hand-rolled agent loop (spec §7.1).
+"""The hand-rolled agent loop.
 
 ``run_agent_turn`` drives one user turn: build the system prompt fresh from DB
 state, stream Claude Sonnet, execute any requested tools server-side (injecting the
 verified ``user_id``), feed results back, and repeat up to ``MAX_ITERATIONS``. It is
-an async generator yielding the §11.2 event objects; the chat route serializes them
-to SSE frames.
+an async generator yielding the stream event objects defined in ``app.agent.events``;
+the chat route serializes them to SSE frames.
 
 Invariants enforced here (CLAUDE.md):
 - Rule 1: hand-rolled on the raw ``anthropic`` SDK — no orchestration framework.
@@ -50,7 +50,7 @@ from app.services.memory_service import get_memories_for_prompt
 log = get_logger(__name__)
 
 MAX_ITERATIONS = 8  # sole loop-safety mechanism (CLAUDE.md rule 5)
-MAX_HISTORY_TURNS = 20  # bound history before sending (spec §7.5)
+MAX_HISTORY_TURNS = 20  # bound history before sending
 MAX_TOKENS = 2048
 
 CAP_EXHAUSTED_MESSAGE = (
@@ -101,7 +101,7 @@ user's data — you only ever act on the current user's account."""
 
 
 async def build_system_prompt(current_user_id: uuid.UUID, db: AsyncSession) -> str:
-    """Build the §7.2 system prompt, injecting the user's profile + memories from the DB.
+    """Build the system prompt, injecting the user's profile + memories from the DB.
 
     Pulls ``display_name`` / ``experience_level`` / ``primary_goal`` / ``injury_notes``
     from ``users`` every turn, and the user's consolidated ``user_memories`` via
@@ -154,7 +154,7 @@ def _render_memory_block(memories: list[UserMemory]) -> str:
 
 
 def _bound_history(history: list[dict]) -> list[dict]:
-    """Keep only the last ``MAX_HISTORY_TURNS`` turns (spec §7.5).
+    """Keep only the last ``MAX_HISTORY_TURNS`` turns.
 
     Older turns are dropped, not summarized. Transcripts are never persisted or
     summarized into context; the only cross-session context this project keeps is the
@@ -180,7 +180,7 @@ async def run_agent_turn(
     current_user_id: uuid.UUID,
     db: AsyncSession,
 ) -> AsyncGenerator[object]:
-    """Run one user turn, yielding §11.2 stream events (spec §7.1).
+    """Run one user turn, yielding stream events.
 
     Streams text deltas as they arrive, emits tool-call start/complete events around
     each tool execution, and closes with a ``turn_complete`` summary. On a hard cap
@@ -282,7 +282,7 @@ def _log_tool_call(
     latency_ms: int,
     iteration: int,
 ) -> None:
-    """Emit the §11.1 tool-call structured log line."""
+    """Emit the tool-call structured log line."""
     log.info(
         "tool_call",
         extra={
@@ -297,7 +297,7 @@ def _log_tool_call(
 
 
 def _log_turn_complete(user_id: uuid.UUID, iterations: int, turn_start: float) -> None:
-    """Emit the §11.1 turn-level structured log line."""
+    """Emit the turn-level structured log line."""
     log.info(
         "turn_complete",
         extra={

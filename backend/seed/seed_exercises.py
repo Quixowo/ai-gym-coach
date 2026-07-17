@@ -4,11 +4,12 @@ Run from ``backend/`` with::
 
     python -m seed.seed_exercises
 
-Seeds ~50 exercises spanning the §5.2 category spread. Idempotent: exercises are
-keyed by their unique ``name``; an exercise whose name already exists is skipped,
-so re-running never duplicates rows and always converges on the same count.
+Seeds ~50 exercises spanning the full category spread below. Idempotent: exercises
+are keyed by their unique ``name``; an exercise whose name already exists is
+skipped, so re-running never duplicates rows and always converges on the same
+count.
 
-Enum values (spec §5.2), enforced here by construction:
+Enum values, enforced here by construction:
   primary_muscle_group: chest | back | quads | hamstrings | shoulders | arms |
                         core | glutes | calves
   movement_pattern:     push | pull | hinge | squat | carry | isolation

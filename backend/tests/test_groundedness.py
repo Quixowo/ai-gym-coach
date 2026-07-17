@@ -1,17 +1,17 @@
-"""RAG groundedness eval (spec §14.2) — recorded fixtures, no live API.
+"""RAG groundedness eval — recorded fixtures, no live API.
 
 Each ``claude_responses/grd_*.json`` fixture was recorded once against the live
 corpus + Haiku (see ``tests/fixtures/record_fixtures.py``): the top-5 retrieved
 chunks, the synthesis answer, and the groundedness verdict for one question. Here we
 re-insert those chunks into the test DB with :func:`rank_embedding` synthetic vectors
-(NEVER real embeddings in fixtures — spec §14.2 / the ``_replay`` contract), point
+(NEVER real embeddings in fixtures — see the ``_replay`` contract), point
 the Voyage/Anthropic factories at fakes replaying the recording, and run the REAL
 ``search_knowledge_base`` — asserting it reproduces the recorded outcome exactly.
 
 15 questions are answerable (12 ``training`` + 3 ``injury_prevention``); 4 are traps
 with no good answer in the corpus (one nutrition-flavoured), used to confirm the
 pipeline refuses rather than fabricates. The aggregate tests report the pass rate and
-the trap-refusal rate — the citable §14.2 numbers.
+the trap-refusal rate — the citable numbers.
 
 This suite wipes ``knowledge_chunks`` in the shared dev DB (like
 ``test_knowledge_service``); the corpus must be re-ingested before any live RAG work.
@@ -100,14 +100,14 @@ async def test_replays_recorded_outcome(monkeypatch: pytest.MonkeyPatch, fixture
 
 
 def test_answerable_pass_rate() -> None:
-    """Report + gate the answerable groundedness pass rate (spec §14.2)."""
+    """Report + gate the answerable groundedness pass rate."""
     passed = sum(1 for f in ANSWERABLE if f["expected"]["groundedness_passed"])
     assert len(ANSWERABLE) == 15
     assert passed >= MIN_ANSWERABLE_PASS, f"groundedness pass rate {passed}/15 below floor"
 
 
 def test_pass_rate_by_category() -> None:
-    """Every injury_prevention answer must stay grounded (citation-critical, §9.4)."""
+    """Every injury_prevention answer must stay grounded (citation-critical)."""
     injury = [f for f in ANSWERABLE if f["category"] == "injury_prevention"]
     assert injury, "expected injury_prevention questions"
     assert all(f["expected"]["groundedness_passed"] for f in injury)
@@ -121,7 +121,7 @@ def test_traps_refused_not_fabricated() -> None:
 
 
 def test_injury_sources_carry_citations() -> None:
-    """Grounded injury answers surface their source citation (spec §9.4)."""
+    """Grounded injury answers surface their source citation."""
     for f in ANSWERABLE:
         if f["category"] != "injury_prevention":
             continue

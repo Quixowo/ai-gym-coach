@@ -1,4 +1,4 @@
-"""Tool-handler tests (spec §8) — ``execute_tool`` dispatch + isolation contract.
+"""Tool-handler tests — ``execute_tool`` dispatch + isolation contract.
 
 No live API here (handlers make no LLM calls). Covers: right service called with the
 *injected* user_id; malformed LLM input -> ``{"error": ...}`` not an exception;

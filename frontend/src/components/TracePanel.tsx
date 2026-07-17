@@ -5,7 +5,7 @@
  * arrives. Styled as a console/instrument readout: monospace labels, tabular
  * latency numbers in the scoreboard aesthetic, muted result summaries.
  *
- * Event rendering per §11.2:
+ * Event rendering:
  *   tool_call_started   → "Calling {tool}…"  with an in-progress pulse
  *   tool_call_completed → checkmark + tool name + latency_ms + result_summary
  *   turn_complete       → divider line with iteration + total latency summary

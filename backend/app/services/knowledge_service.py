@@ -1,18 +1,18 @@
-"""RAG retrieval + synthesis — the internals of ``search_knowledge_base`` (spec §9.2).
+"""RAG retrieval + synthesis — the internals of ``search_knowledge_base``.
 
-This is the implementation behind the §8.7 tool contract. One call:
+This is the implementation behind the tool contract. One call:
 
 1. embeds the query via the async Voyage client (``input_type="query"``),
 2. pulls the top-``top_k`` chunks by cosine distance from ``knowledge_chunks``,
 3. has Haiku synthesize a 2-4 sentence answer grounded strictly in those chunks,
-4. runs a second cheap Haiku entailment check (§10.3), and
+4. runs a second cheap Haiku entailment check, and
 5. returns ``{"answer", "sources", "groundedness_passed}``.
 
 Design decisions worth flagging:
 - The knowledge base is global/unscoped — it holds no user data, so there is no
   ``user_id`` filter here (application-level access control applies to user-owned
   tables, not this one; CLAUDE.md rule 9). This is not a gap.
-- Groundedness failure does NOT discard retrieval (§9.2 fallback): we log a
+- Groundedness failure does NOT discard retrieval: we log a
   structured ``groundedness_failed`` warning and return a conservative answer WITH
   the sources so the user can read the material directly rather than being left
   with nothing.
@@ -68,10 +68,10 @@ _GROUNDEDNESS_PROMPT = (
 
 
 def _dedup_sources(chunks: Sequence[KnowledgeChunk]) -> list[dict]:
-    """Collapse chunks by ``document_title`` so one source isn't listed k times (§9.2).
+    """Collapse chunks by ``document_title`` so one source isn't listed k times.
 
     Preserves first-seen (best-ranked) order and carries ``category`` +
-    ``source_citation`` — injury answers must visibly show their citation (§9.4).
+    ``source_citation`` — injury answers must visibly show their citation.
     """
     seen: set[str] = set()
     out: list[dict] = []
@@ -94,12 +94,12 @@ def _numbered_reference(chunks: Sequence[KnowledgeChunk]) -> str:
 
 
 def build_synthesis_prompt(query: str, chunks: Sequence[KnowledgeChunk]) -> str:
-    """Render the §9.2 synthesis prompt with numbered [1]..[k] reference chunks."""
+    """Render the synthesis prompt with numbered [1]..[k] reference chunks."""
     return _SYNTHESIS_PROMPT.format(query=query, reference=_numbered_reference(chunks))
 
 
 async def _check_groundedness(answer: str, chunks: Sequence[KnowledgeChunk]) -> bool:
-    """Second Haiku call (§10.3): strict ``GROUNDED`` entailment check.
+    """Second Haiku call: strict ``GROUNDED`` entailment check.
 
     Returns True only on an exact ``GROUNDED`` (after strip); any other word is
     treated as not-grounded, matching the classifier's strict one-word convention.
@@ -121,7 +121,7 @@ async def _check_groundedness(answer: str, chunks: Sequence[KnowledgeChunk]) -> 
 
 
 async def search_knowledge_base(db: AsyncSession, query: str, top_k: int = DEFAULT_TOP_K) -> dict:
-    """Retrieve + synthesize a grounded answer for ``query`` (spec §9.2).
+    """Retrieve + synthesize a grounded answer for ``query``.
 
     Returns ``{"answer", "sources", "groundedness_passed"}``. Empty retrieval yields
     an explicit no-results answer; a failed groundedness check yields the
@@ -159,7 +159,7 @@ async def search_knowledge_base(db: AsyncSession, query: str, top_k: int = DEFAU
 
     if not await _check_groundedness(answer, chunks):
         # Groundedness failed — log for tuning, but keep the sources so the user can
-        # read the underlying material rather than being left with nothing (§9.2).
+        # read the underlying material rather than being left with nothing.
         log.warning(
             "groundedness_failed",
             extra={"query": query, "sources": [s["document_title"] for s in sources]},

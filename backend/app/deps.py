@@ -20,7 +20,7 @@ async def get_db() -> AsyncGenerator[AsyncSession]:
 
 
 async def get_current_user(access_token: str | None = Cookie(None)) -> uuid.UUID:
-    """Resolve the authenticated user's ID from the access-token cookie (spec §6.3).
+    """Resolve the authenticated user's ID from the access-token cookie.
 
     Decodes + verifies the ``access_token`` httpOnly cookie, requiring a valid
     signature, unexpired ``exp``, and ``type == "access"`` (a refresh token

@@ -1,4 +1,4 @@
-"""Pydantic request/response models for the auth endpoints (spec §6.1).
+"""Pydantic request/response models for the auth endpoints.
 
 Email is validated with a plain ``str`` + lightweight regex rather than
 ``pydantic.EmailStr``. ``EmailStr`` requires the ``email-validator`` package,

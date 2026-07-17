@@ -1,4 +1,4 @@
-"""Shared set-entry validation (spec §5.5).
+"""Shared set-entry validation.
 
 These rules are enforced in BOTH the Pydantic request schema and the service
 layer. The service copy is not redundant: the Phase-4 agent tool path builds
@@ -17,12 +17,12 @@ MIN_REPS = 1
 MAX_REPS = 100
 MIN_RIR = 0.0
 MAX_RIR = 10.0
-# RIR is recorded in half-rep increments (spec §5.5: "0.5 increments allowed").
+# RIR is recorded in half-rep increments ("0.5 increments allowed").
 RIR_INCREMENT = 0.5
 
 
 def validate_set_fields(weight: float, reps: int, rir: float | None) -> None:
-    """Validate a single set's weight / reps / rir per spec §5.5.
+    """Validate a single set's weight / reps / rir.
 
     Raises :class:`ValidationError` (which routes map to HTTP 422) on any breach:
     ``weight >= 0``; ``1 <= reps <= 100``; ``rir`` either ``None`` or within

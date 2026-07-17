@@ -1,4 +1,4 @@
-"""Application-level access-control checklist (spec §6.3 review item).
+"""Application-level access-control checklist.
 
 Verifies the cross-user isolation guarantee: user B can never see or modify user
 A's sessions, sets, history, or programs. Every service function filters on the

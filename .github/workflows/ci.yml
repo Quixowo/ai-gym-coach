@@ -55,8 +55,8 @@ jobs:
           JWT_SECRET: test-secret-not-for-production
           REDIS_URL: redis://localhost:6379/0
           # No real model keys: the eval suites run entirely on recorded fixtures
-          # (CLAUDE.md rule 10 / BUILD_SPEC §14.5). Set explicitly empty so a stray
-          # developer key in the runner env can never turn CI into a live-API run.
+          # (CLAUDE.md rule 10). Set explicitly empty so a stray developer key in
+          # the runner env can never turn CI into a live-API run.
           ANTHROPIC_API_KEY: ""
           VOYAGE_API_KEY: ""
         run: pytest

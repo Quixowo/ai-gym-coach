@@ -1,6 +1,6 @@
 """Shared pytest fixtures.
 
-What the eval suites do and do NOT verify (BUILD_SPEC §14.5, CLAUDE.md rule 10):
+What the eval suites do and do NOT verify (CLAUDE.md rule 10):
 the model-behavior suites — ``test_tool_correctness``, ``test_groundedness``,
 ``test_red_flag_recall`` — replay Claude/Voyage responses recorded once and committed
 under ``tests/fixtures/claude_responses/``. They verify that the *code* handles a

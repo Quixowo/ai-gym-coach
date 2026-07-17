@@ -1,4 +1,4 @@
-"""Chat endpoint tests (spec §7.5, §10.1, §11.2) — mocked agent, no live API.
+"""Chat endpoint tests — mocked agent, no live API.
 
 Patches ``classify_acute_injury`` and ``run_agent_turn`` at the chat route's import
 boundary so no Anthropic call is made. Verifies: auth guard (401); the classifier

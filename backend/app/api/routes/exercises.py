@@ -1,4 +1,4 @@
-"""Exercise catalog endpoints (spec §12).
+"""Exercise catalog endpoints.
 
 The catalog is global and read-only, so these read paths carry no ``user_id``
 filter (the deliberate exception to application-level access control — there is

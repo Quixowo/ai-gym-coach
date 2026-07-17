@@ -1,19 +1,19 @@
-"""Agent chat endpoint — ``POST /chat`` (spec §7.5, §10.1, §6.4, §11.2).
+"""Agent chat endpoint — ``POST /chat``.
 
-Streams the agent's response as Server-Sent Events. Flow (§7.5 ordering note):
+Streams the agent's response as Server-Sent Events. Flow:
 
 1. Auth via ``get_current_user`` (the JWT-verified user is the only source of
    identity — CLAUDE.md rule 2).
 2. Run the injury red-flag classifier **first**. On a flag, stream the fixed
    redirect string and a ``turn_complete``, then stop — the orchestrator is never
-   called (§10.1). This puts one blocking Haiku call on the critical path of every
-   message, an accepted safety-for-latency tradeoff (§7.5).
+   called. This puts one blocking Haiku call on the critical path of every
+   message, an accepted safety-for-latency tradeoff.
 3. Otherwise delegate to ``run_agent_turn``, forwarding its events.
 4. After the response has fully streamed, kick off the episodic-memory pipeline as a
    background task (only when the request carried a ``conversation_id`` and the turn
    produced assistant text).
 
-The frontend still replays conversation history with every request (§7.5) and the
+The frontend still replays conversation history with every request and the
 backend still persists NO transcripts. What the backend now *does* persist is derived
 memory: durable, third-person observations extracted from each turn and periodically
 consolidated into ``user_memories`` (see ``app.services.memory_service``). ``history``
@@ -21,8 +21,8 @@ is untrusted conversational content — every tool still injects ``current_user_
 server-side regardless of what it claims.
 
 Rate limiting: explicit ``@limiter.limit(CHAT_RATE_LIMIT)`` (20/hour) — stricter
-than the general tier because each message can fan out into several Claude calls
-(§6.4). Per LESSONS.md the decorator is required (middleware-only limits skip
+than the general tier because each message can fan out into several Claude calls.
+Per LESSONS.md the decorator is required (middleware-only limits skip
 router-mounted routes); the handler takes ``request: Request``.
 """
 
@@ -53,7 +53,7 @@ log = get_logger(__name__)
 
 
 class ChatMessage(BaseModel):
-    """One prior conversational turn replayed by the frontend (spec §7.5).
+    """One prior conversational turn replayed by the frontend.
 
     ``role`` is constrained to ``user``/``assistant`` — a ``system`` or ``tool`` role
     injection attempt in history is rejected at validation (422). ``content`` is the
@@ -99,7 +99,7 @@ async def _event_stream(
     """
     try:
         if await classify_acute_injury(message):
-            # Short-circuit: fixed redirect, no orchestrator call (§10.1). Still a
+            # Short-circuit: fixed redirect, no orchestrator call. Still a
             # normal SSE turn (text_delta + turn_complete), just not LLM-generated.
             reply_parts.append(FIXED_INJURY_REDIRECT_RESPONSE)
             yield _sse_frame(TextDeltaEvent(text=FIXED_INJURY_REDIRECT_RESPONSE).as_dict())

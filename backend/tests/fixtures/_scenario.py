@@ -1,4 +1,4 @@
-"""Tool-correctness scenario definitions + DB setup applier (spec §14.1).
+"""Tool-correctness scenario definitions + DB setup applier.
 
 The six recorded agent-turn scenarios are declared here as data so the two code
 paths that need them stay in lock-step:
@@ -40,7 +40,7 @@ PULLDOWN = "Lat Pulldown"
 
 
 # --------------------------------------------------------------------------- #
-# Scenario data (6 cases: the 4 §14.1 representatives + 2 more)
+# Scenario data (6 cases: 4 representatives + 2 more)
 # --------------------------------------------------------------------------- #
 # Each scenario:
 #   id            fixture basename (claude_responses/tc_<id>.json)
@@ -111,7 +111,7 @@ SCENARIOS: list[dict] = [
         ],
     },
     {
-        # §14.1 asks this case to prove the TOOL's 10% cap rejects the write. A
+        # This case is meant to prove the TOOL's 10% cap rejects the write. A
         # blatant "+50 lbs" (22%) makes the coach persona self-censor and ask the
         # user to reconsider *before* calling update_program, so the tool guard
         # never runs. A routine-looking 200->225 (12.5%) request the coach will

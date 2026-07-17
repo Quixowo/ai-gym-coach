@@ -1,12 +1,12 @@
-"""Program (workout template / plan) service (spec §5.3, §8.4, §10.2).
+"""Program (workout template / plan) service.
 
 Single source of truth shared by the REST endpoints (Phase 3) and the
 ``get_program`` / ``update_program`` agent tools (Phase 4). Every function takes
-``user_id`` explicitly and filters on it (application-level access control, spec
-§6.3): a caller-supplied ``program_id`` is never trusted without also matching
+``user_id`` explicitly and filters on it (application-level access control): a
+caller-supplied ``program_id`` is never trusted without also matching
 ``user_id``, so another user's program resolves to :class:`NotFoundError` (404).
 
-The 10% load-jump hard cap (§10.2) is enforced here, in code, on the update path
+The 10% load-jump hard cap is enforced here, in code, on the update path
 — not requested via prompt and not in a Pydantic schema — because it must hold
 identically for the REST ``PUT /programs/{id}`` and the Phase-4 ``update_program``
 tool. The check runs across ALL exercises in the update *before* any write, so a
@@ -25,7 +25,7 @@ from app.models.program import Program, ProgramExercise
 from app.services.errors import LoadJumpCapError, NotFoundError
 
 # Any single update raising a target_weight above prior * this factor is rejected.
-# 10% is a starting value, not a rigorously derived one (§10.2) — tunable.
+# 10% is a starting value, not a rigorously derived one — tunable.
 LOAD_JUMP_CAP_FACTOR = 1.10
 
 
@@ -87,7 +87,7 @@ async def create_program(
     ``exercises`` is a list of dicts with ``exercise_id`` (required) and optional
     ``target_sets`` / ``target_reps`` / ``target_rir`` / ``target_weight``;
     ``order_index`` defaults to list position when absent. No load-jump cap
-    applies on create — there is no prior target to compare against (§10.2). Each
+    applies on create — there is no prior target to compare against. Each
     ``exercise_id`` is verified to exist (:class:`NotFoundError` otherwise).
     """
     program = Program(user_id=user_id, name=name)
@@ -110,7 +110,7 @@ async def update_program(
     name: str | None,
     exercises: list[dict],
 ) -> tuple[Program, list[tuple[ProgramExercise, str]]]:
-    """Replace a program's exercise set, enforcing the 10% load-jump cap (§10.2).
+    """Replace a program's exercise set, enforcing the 10% load-jump cap.
 
     The program must belong to the user (:class:`NotFoundError` -> 404 otherwise).
     Before writing anything, every requested ``target_weight`` is compared against
@@ -153,7 +153,7 @@ async def update_program(
     if name is not None:
         program.name = name
 
-    # Replace the exercise set wholesale (spec §8.4 "modify ... target ...").
+    # Replace the exercise set wholesale ("modify ... target ...").
     existing = (
         (await db.execute(select(ProgramExercise).where(ProgramExercise.program_id == program.id)))
         .scalars()

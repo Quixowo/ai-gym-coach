@@ -19,6 +19,6 @@ class User(Base):
     experience_level: Mapped[str]  # "beginner" | "intermediate" | "advanced"
     primary_goal: Mapped[str]  # "hypertrophy" | "strength" | "fat_loss" | "general"
     # Free text, user-authored profile context (not agent-written); surfaced in the
-    # agent system prompt each session (spec §5.1).
+    # agent system prompt each session.
     injury_notes: Mapped[str | None]
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

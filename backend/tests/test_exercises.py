@@ -1,4 +1,4 @@
-"""Exercise catalog endpoint tests (spec §12, §8.5).
+"""Exercise catalog endpoint tests.
 
 Covers listing, fuzzy search (hit + below-threshold miss), and the 401-without-cookie
 guard. The catalog is seeded once by the ``seeded_exercises`` conftest fixture.

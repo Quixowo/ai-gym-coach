@@ -15,7 +15,7 @@ from app.db.session import engine
 
 app = FastAPI(title="HeyCoach API")
 
-# --- Rate limiting (spec §6.4) ------------------------------------------------
+# --- Rate limiting -------------------------------------------------------------
 # The Limiter is attached to app.state (slowapi's required lookup point), the
 # 429 handler translates RateLimitExceeded into a JSON response, and the
 # middleware enforces the app-wide default limit ("60/minute") on every route.
@@ -44,8 +44,8 @@ app.include_router(memories.router)
 async def health(request: Request) -> JSONResponse:
     """Readiness probe that actually touches the DB.
 
-    The deployed keep-alive ping must reach the database to count as meaningful
-    (spec §16), so this runs ``SELECT 1`` through the async engine. Returns 200
+    The deployed keep-alive ping must reach the database to count as meaningful,
+    so this runs ``SELECT 1`` through the async engine. Returns 200
     ``{"status": "ok"}`` on success, or 503 ``{"status": "degraded"}`` if the DB
     is unreachable.
 

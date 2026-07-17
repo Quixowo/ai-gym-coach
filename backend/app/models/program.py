@@ -28,6 +28,6 @@ class ProgramExercise(Base):
     target_sets: Mapped[int | None]
     target_reps: Mapped[int | None]
     target_rir: Mapped[float | None]
-    # Needed so update_program's load-jump guardrail (§10.2) has a week-over-week
+    # Needed so update_program's load-jump guardrail has a week-over-week
     # comparison baseline.
     target_weight: Mapped[float | None]

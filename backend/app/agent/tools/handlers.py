@@ -1,4 +1,4 @@
-"""Tool execution — the trusted server side of every agent tool call (spec §8).
+"""Tool execution — the trusted server side of every agent tool call.
 
 ``execute_tool`` is the single dispatch point the orchestrator calls. Contract
 (CLAUDE.md rules 2 & 4):
@@ -6,13 +6,13 @@
 - ``current_user_id`` is injected here from the JWT-verified session and passed to
   every service call. It is NEVER read from ``tool_input`` — the LLM-supplied input
   is untrusted and only ever supplies non-identity arguments (exercise ids, weights,
-  names). This is the structural prompt-injection defense (§6.5).
+  names). This is the structural prompt-injection defense.
 - Every handler returns a plain dict — success payload or ``{"error": "..."}`` — and
   never raises. Domain failures (``ServiceError``) become ``{"error": str(exc)}``;
   anything unexpected is logged and rendered as a generic error, because an unhandled
-  exception here would kill the whole SSE stream, not just one tool call (§7.1).
+  exception here would kill the whole SSE stream, not just one tool call.
 
-**DB transaction isolation (§7.1 required decision):** the read-only tools reuse the
+**DB transaction isolation:** the read-only tools reuse the
 request-scoped ``db`` handed in by the orchestrator. The *mutating* tools (``log_set``,
 ``update_program``) each open their **own** short-lived ``AsyncSession`` from
 ``async_session_maker`` and commit/roll back independently. This is the "own session
@@ -44,7 +44,7 @@ log = get_logger(__name__)
 
 
 def _new_session() -> AsyncSession:
-    """Open a fresh AsyncSession for a mutating tool call (§7.1 isolation decision).
+    """Open a fresh AsyncSession for a mutating tool call (transaction isolation decision).
 
     Resolved through the module at call time (not imported once) so tests can point
     the mutating handlers at the NullPool test session maker, keeping DB writes on the
@@ -160,7 +160,7 @@ async def handle_get_program(
 async def handle_search_exercises(
     tool_input: dict, current_user_id: uuid.UUID, db: AsyncSession
 ) -> dict:
-    # No user data here — the catalog is global/read-only (§8.5). current_user_id is
+    # No user data here — the catalog is global/read-only. current_user_id is
     # accepted for a uniform handler signature but unused.
     try:
         query = tool_input.get("query")
@@ -201,7 +201,7 @@ async def handle_analyze_progression(
 async def handle_search_knowledge_base(
     tool_input: dict, current_user_id: uuid.UUID, db: AsyncSession
 ) -> dict:
-    """RAG tool handler (spec §8.7/§9.2) — read-only, reuses the request-scoped session.
+    """RAG tool handler — read-only, reuses the request-scoped session.
 
     The knowledge base is global/unscoped non-user data, so ``current_user_id`` is
     accepted only for the uniform handler signature (like ``search_exercises``). Every
@@ -262,7 +262,7 @@ async def handle_log_set(tool_input: dict, current_user_id: uuid.UUID, db: Async
 async def handle_update_program(
     tool_input: dict, current_user_id: uuid.UUID, db: AsyncSession
 ) -> dict:
-    """Create-or-update a program by name (spec §8.4).
+    """Create-or-update a program by name.
 
     Finds the user's program by ``program_name`` (case-insensitive exact match);
     creates it if absent, otherwise replaces its exercise set via the existing service.

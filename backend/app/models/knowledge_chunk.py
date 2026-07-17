@@ -26,7 +26,7 @@ class KnowledgeChunk(Base):
     __table_args__ = (
         # HNSW index, cosine distance. Voyage embeddings are unit-normalized, so
         # cosine and dot-product ranking are equivalent — cosine used for
-        # readability (spec §5.6).
+        # readability.
         Index(
             "ix_knowledge_chunks_embedding",
             "embedding",

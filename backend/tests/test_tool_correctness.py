@@ -1,10 +1,10 @@
-"""Tool-call correctness eval (spec §14.1) — recorded fixtures, no live API.
+"""Tool-call correctness eval — recorded fixtures, no live API.
 
 Each ``claude_responses/tc_*.json`` fixture is a real ``run_agent_turn`` recorded
 once against live Sonnet (see ``tests/fixtures/record_fixtures.py``). Here the REAL
 orchestrator replays those streamed turns through :class:`FakeAnthropicClient` and we
-assert the agent invoked the expected tool(s) with correct arguments — including the
-two behaviours §14.1 calls out specifically: the 10% load-jump cap must *reject* the
+assert the agent invoked the expected tool(s) with correct arguments — including two
+behaviours called out specifically: the 10% load-jump cap must *reject* the
 "+50 lbs squat" update (a structured-error tool_result, not just a tool call), and
 the "log 3 sets" turn must produce the correct ``set_entries`` rows.
 
@@ -113,7 +113,7 @@ async def test_tool_correctness(monkeypatch: pytest.MonkeyPatch, fixture_path: P
 
         checks = fixture["checks"]
 
-        # §14.1: the load-jump cap must REJECT (structured error tool_result), not just
+        # The load-jump cap must REJECT (structured error tool_result), not just
         # be called.
         if checks.get("cap_rejected"):
             cap_events = [e for e in completed if e.tool == "update_program"]
@@ -121,7 +121,7 @@ async def test_tool_correctness(monkeypatch: pytest.MonkeyPatch, fixture_path: P
             assert all("10% safety cap" in e.result_summary for e in cap_events)
             assert all(e.result_summary.startswith("error:") for e in cap_events)
 
-        # §14.1: the log-sets turn must produce the correct set_entries rows.
+        # The log-sets turn must produce the correct set_entries rows.
         if "logged_sets" in checks:
             spec = checks["logged_sets"]
             exercise_id = names[spec["exercise_name"]]
@@ -147,7 +147,7 @@ async def test_tool_correctness(monkeypatch: pytest.MonkeyPatch, fixture_path: P
 
 
 def test_all_six_scenarios_present() -> None:
-    """The suite covers the 4 §14.1 representatives + 2 more (6 recorded turns)."""
+    """The suite covers 4 representatives + 2 more (6 recorded turns)."""
     assert len(TOOL_FIXTURES) == 6
 
 

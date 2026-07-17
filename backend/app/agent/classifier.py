@@ -1,4 +1,4 @@
-"""Injury red-flag classifier (spec §10.1).
+"""Injury red-flag classifier.
 
 A single cheap Haiku call, run in the chat route *before* the agent loop, that
 decides whether the incoming message describes a potential acute injury (needs

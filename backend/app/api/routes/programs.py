@@ -1,9 +1,9 @@
-"""Program endpoints (spec §12).
+"""Program endpoints.
 
 Behind ``get_current_user``; ``user_id`` is passed explicitly into
-``program_service`` (application-level access control, spec §6.3) so another
+``program_service`` (application-level access control) so another
 user's program 404s. ``PUT /programs/{id}`` is subject to the same 10% load-jump
-cap as the ``update_program`` tool — enforced in the service (§10.2), surfaced
+cap as the ``update_program`` tool — enforced in the service, surfaced
 here as 422 with the structured detail (exercise / prior / requested).
 
 Service domain exceptions translate to HTTP: ``NotFoundError`` -> 404,
@@ -118,7 +118,7 @@ async def update_program(
     user_id: uuid.UUID = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> ProgramDetailResponse:
-    """Edit a program, subject to the 10% load-jump cap (§10.2).
+    """Edit a program, subject to the 10% load-jump cap.
 
     A single over-cap ``target_weight`` rejects the whole update (422, detail
     names the exercise / prior / requested). 404 if the program isn't the user's.

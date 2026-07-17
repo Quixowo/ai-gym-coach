@@ -1,10 +1,10 @@
-"""Authentication endpoints (spec §6.1).
+"""Authentication endpoints.
 
 Implements register / login / refresh / logout, plus a pragmatic ``GET /auth/me``
 (see the ``/auth/me`` note below). Both the access and refresh tokens are set as
 httpOnly cookies with environment-driven ``SameSite`` / ``Secure`` (``Lax`` +
 insecure for local dev, ``None`` + ``Secure`` for the deployed cross-origin
-setup — spec §6.1). Tokens are never returned in the response body.
+setup). Tokens are never returned in the response body.
 
 Login uses an identical 401 for "unknown email" and "wrong password" so an
 attacker can't enumerate registered accounts.
@@ -155,7 +155,7 @@ async def refresh(
     response: Response,
     refresh_token: str | None = Cookie(None),
 ) -> Response:
-    """Mint a new access cookie from a valid refresh cookie (spec §6.1).
+    """Mint a new access cookie from a valid refresh cookie.
 
     Requires a ``type == "refresh"`` token — an access token presented here is
     rejected 401. The refresh cookie itself is left untouched (still valid until
@@ -205,7 +205,7 @@ async def me(
 ) -> User:
     """Return the authenticated user's profile.
 
-    Deviation from spec §12's endpoint table: not listed there, but the frontend
+    Not part of the original planned endpoint list, but the frontend
     AuthContext needs it to restore login state on reload, and it serves as the
     canonical protected endpoint for auth tests. Fully behind
     ``get_current_user`` (access-cookie required, 401 otherwise).

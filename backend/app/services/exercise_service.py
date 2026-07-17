@@ -1,8 +1,8 @@
-"""Exercise catalog service (spec §8.5).
+"""Exercise catalog service.
 
 The exercise catalog is global and read-only — it is not user-scoped, so these
 functions are the deliberate exception to the "every service function takes a
-``user_id``" rule (CLAUDE.md rule 2 / spec §6.3): there is no user data here to
+``user_id``" rule (CLAUDE.md rule 2): there is no user data here to
 protect.
 
 ``search_exercises`` is the deterministic fuzzy-match used by both the
@@ -28,7 +28,7 @@ from app.models.exercise import Exercise
 # raise it to reduce false positives, lower it to catch sloppier input.
 MIN_MATCH_SCORE = 60.0
 
-# Top-N candidates returned to the caller / agent (spec §8.5).
+# Top-N candidates returned to the caller / agent.
 MAX_MATCHES = 5
 
 

@@ -8,7 +8,7 @@ def test_health_returns_ok(client: TestClient) -> None:
 
     Uses the shared session-scoped ``client`` fixture (NullPool engine override),
     so it plays nicely alongside the multi-request auth tests. Requires a
-    reachable Postgres (CI service / local ``docker compose up -d`` — spec §16).
+    reachable Postgres (CI service / local ``docker compose up -d``).
     """
     response = client.get("/health")
     assert response.status_code == 200

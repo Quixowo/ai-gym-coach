@@ -1,4 +1,4 @@
-"""Shared Anthropic async client (spec §7.4).
+"""Shared Anthropic async client.
 
 A single lazily-constructed :class:`anthropic.AsyncAnthropic` reused across the
 classifier and the agent loop, so:
