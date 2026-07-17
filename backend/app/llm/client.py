@@ -4,7 +4,7 @@ A single lazily-constructed :class:`anthropic.AsyncAnthropic` reused across the
 classifier and the agent loop, so:
 
 - there is one place to configure/monkeypatch the client (tests patch
-  :func:`get_anthropic_client` at this boundary — CLAUDE.md rule 10, no live API in
+  :func:`get_anthropic_client` at this boundary, so no live API is hit in
   CI), and
 - the client is built on first use, not at import time, so importing the app with
   ``ANTHROPIC_API_KEY`` unset/empty never fails (the key is only required when a call

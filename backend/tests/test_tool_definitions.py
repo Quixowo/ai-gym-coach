@@ -1,4 +1,4 @@
-"""Tool-schema invariants (CLAUDE.md rule 2) — pure, no DB/API.
+"""Tool-schema invariants — pure, no DB/API.
 
 Two things are locked down here:
 
@@ -46,5 +46,5 @@ def test_no_user_scoping_field_in_any_tool_schema() -> None:
         for name in _property_names(tool["input_schema"]):
             assert "user" not in name.lower(), (
                 f"tool {tool['name']!r} exposes user-scoping field {name!r} — "
-                "the verified user id is injected server-side (CLAUDE.md rule 2)"
+                "the verified user id is injected server-side"
             )

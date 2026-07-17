@@ -1,7 +1,7 @@
 """Replay harness shared by the three eval suites.
 
 The eval suites consume ONLY committed JSON fixtures under ``claude_responses/``
-(CLAUDE.md rule 10 — CI never calls a live model). This module turns those
+(CI never calls a live model). This module turns those
 recordings back into the fake SDK surfaces the production code expects, so the
 *real* orchestrator / classifier / knowledge service run against recorded model
 output:
@@ -19,8 +19,8 @@ output:
 The stream fakes mirror ``tests/test_orchestrator.py``'s pattern (an async
 context manager that is also an async iterator of text deltas and exposes
 ``get_final_message``); here the content blocks come from a recording instead
-of being hand-built. Per LESSONS.md, ``messages`` kwargs are snapshotted at
-call time (the orchestrator mutates one list across iterations).
+of being hand-built. ``messages`` kwargs are snapshotted at
+call time because the orchestrator mutates one list across iterations.
 """
 
 from __future__ import annotations
@@ -173,7 +173,7 @@ class _FakeMessages:
 
     def stream(self, **kwargs):
         # Snapshot messages at call time — the orchestrator reuses one mutable
-        # list and appends after each call (LESSONS.md stream-kwargs entry).
+        # list and appends after each call.
         snapshot = dict(kwargs)
         snapshot["messages"] = list(kwargs.get("messages", []))
         self.stream_calls.append(snapshot)

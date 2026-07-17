@@ -11,19 +11,19 @@ orchestrator injects into the system prompt every turn.
 Design decisions worth flagging:
 - **Never raises out.** This is post-response background work; every failure path
   (bad model output, DB error, provider outage) is caught, logged, and swallowed so
-  it can neither break nor delay a chat turn (CLAUDE.md rule 4 spirit). Partial
+  it can neither break nor delay a chat turn. Partial
   progress is fine — a topic that fails to consolidate this turn is retried on the
   next observation.
-- **Deterministic logic in code** (CLAUDE.md rule 3): the threshold is a
+- **Deterministic logic in code**: the threshold is a
   ``COUNT(DISTINCT conversation_id)`` in SQL, not an LLM judgment. Haiku only does the
   two language tasks (extract, synthesize).
-- **Security** (CLAUDE.md rule 2): ``user_id`` comes only from the caller (JWT-derived),
+- **Security**: ``user_id`` comes only from the caller (JWT-derived),
   never from model output; every query filters ``WHERE user_id = :user_id``
   (application-level access control). Memory text is a third-person paraphrase, never
   verbatim user input, and is never used to construct tool arguments anywhere.
 
 The client factory (:func:`get_anthropic_client`) is imported and called here so
-tests patch it at THIS module and no live API is hit in CI (CLAUDE.md rule 10).
+tests patch it at THIS module and no live API is hit in CI.
 """
 
 from __future__ import annotations
@@ -281,7 +281,7 @@ async def _store_observations(
 async def _maybe_consolidate(user_id: uuid.UUID, topic_key: str, db: AsyncSession) -> None:
     """Consolidate iff the topic crossed the distinct-conversation threshold OR is graduated.
 
-    Deterministic gate (CLAUDE.md rule 3): count DISTINCT conversation_ids for
+    Deterministic gate: count DISTINCT conversation_ids for
     ``(user, topic_key)``. Consolidate when that reaches
     ``settings.MEMORY_CONSOLIDATION_THRESHOLD``, or when a ``user_memories`` row already
     exists (post-graduation refresh — any new observation on a graduated topic updates

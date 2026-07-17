@@ -4,10 +4,10 @@ Formalizes the hand-verified wiring: the ``POST /chat`` route enqueues the memor
 pipeline as a Starlette ``BackgroundTask`` that runs AFTER the SSE body is fully sent,
 and only when a ``conversation_id`` was supplied. The classifier, orchestrator, and
 ``process_turn`` are all patched at the chat route's import boundary, so no Anthropic
-call is made (CLAUDE.md rule 10) and we observe exactly what the route hands the
+call is made and we observe exactly what the route hands the
 pipeline.
 
-Per LESSONS.md the background task opens its OWN session from
+The background task opens its OWN session from
 ``app.db.session.async_session_maker`` (FastAPI closes the request's ``get_db`` yield-
 dependency before background tasks run); that maker is repointed at the NullPool test
 maker so the post-response session doesn't hit the closed-loop pooling bug.

@@ -29,7 +29,7 @@ async def get_current_user(access_token: str | None = Cookie(None)) -> uuid.UUID
     Raises HTTP 401 on any failure — missing cookie, malformed/invalid token,
     expired token, or wrong token type — so REST endpoints and (later) the agent
     orchestrator share a single verified-user resolution path. This is the
-    server-side injection point behind CLAUDE.md rule 2: user identity comes from
+    server-side injection point for user identity: it comes from
     here, never from client- or LLM-supplied input.
     """
     if not access_token:

@@ -1,14 +1,14 @@
 """Pure-code memory-pipeline tests (deterministic logic, no live API).
 
-These exercise the parts CLAUDE.md rule 3 keeps in code, not in the model: the
+These exercise the parts kept in code, not in the model: the
 DISTINCT-conversation threshold gate, post-graduation re-consolidation, upsert
 idempotency, and the system-prompt injection rendering + cap. The only model
 involvement is a trivial stubbed consolidation reply (a fixed string), replayed via
 :class:`FakeAnthropicClient` with ``get_anthropic_client`` patched at the
-``memory_service`` boundary — no live Haiku call (CLAUDE.md rule 10).
+``memory_service`` boundary — no live Haiku call.
 
 All DB work runs through the NullPool ``test_session_maker`` (never the app's pooled
-maker) to stay clear of the closed-loop bugs in LESSONS.md.
+maker) to stay clear of the closed-loop bug family (see conftest.py).
 """
 
 from __future__ import annotations

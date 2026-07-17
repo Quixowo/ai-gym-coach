@@ -3,7 +3,7 @@
 Verifies the cross-user isolation guarantee: user B can never see or modify user
 A's sessions, sets, history, or programs. Every service function filters on the
 JWT-derived ``user_id``, so a cross-user reference resolves to 404/absent, never
-a leak (CLAUDE.md rules 2/9 — this is deliberately NOT Postgres RLS).
+a leak (this is deliberately application-level access control, not Postgres RLS).
 """
 
 from __future__ import annotations

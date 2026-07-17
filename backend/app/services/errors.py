@@ -5,7 +5,7 @@ very different error conventions:
 
 - the REST routes (Phase 3), which need HTTP status codes, and
 - the agent tool handlers (Phase 4), which must return a plain
-  ``{"error": "..."}`` dict and never raise (CLAUDE.md rule 4).
+  ``{"error": "..."}`` dict and never raise.
 
 To keep the services free of any HTTP coupling, they raise these plain domain
 exceptions. Routes catch them and translate to the appropriate status code

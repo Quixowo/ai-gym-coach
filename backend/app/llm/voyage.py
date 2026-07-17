@@ -10,7 +10,7 @@ async client here, and the sync one only in the offline ingestion script).
 Two reasons this is the single construction site:
 
 - there is one place to configure/monkeypatch the client (tests patch
-  :func:`get_voyage_client` at this boundary — CLAUDE.md rule 10, no live API in
+  :func:`get_voyage_client` at this boundary, so no live API is hit in
   CI), and
 - the client is built on first use, not at import time. A ``voyageai`` client can
   raise at construction when no API key is resolvable (neither ``VOYAGE_API_KEY``

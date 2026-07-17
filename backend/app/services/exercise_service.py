@@ -2,12 +2,12 @@
 
 The exercise catalog is global and read-only — it is not user-scoped, so these
 functions are the deliberate exception to the "every service function takes a
-``user_id``" rule (CLAUDE.md rule 2): there is no user data here to
+``user_id``" rule: there is no user data here to
 protect.
 
 ``search_exercises`` is the deterministic fuzzy-match used by both the
 ``GET /exercises/search`` endpoint and (Phase 4) the ``search_exercises`` tool.
-Per CLAUDE.md rule 3, the matching is done in code with ``rapidfuzz``, never
+The matching is done in code with ``rapidfuzz``, never
 delegated to LLM judgment.
 """
 

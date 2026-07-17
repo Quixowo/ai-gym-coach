@@ -3,7 +3,7 @@
 Streams the agent's response as Server-Sent Events. Flow:
 
 1. Auth via ``get_current_user`` (the JWT-verified user is the only source of
-   identity — CLAUDE.md rule 2).
+   identity).
 2. Run the injury red-flag classifier **first**. On a flag, stream the fixed
    redirect string and a ``turn_complete``, then stop — the orchestrator is never
    called. This puts one blocking Haiku call on the critical path of every
@@ -22,7 +22,7 @@ server-side regardless of what it claims.
 
 Rate limiting: explicit ``@limiter.limit(CHAT_RATE_LIMIT)`` (20/hour) — stricter
 than the general tier because each message can fan out into several Claude calls.
-Per LESSONS.md the decorator is required (middleware-only limits skip
+The decorator is required (middleware-only limits skip
 router-mounted routes); the handler takes ``request: Request``.
 """
 

@@ -3,7 +3,7 @@
 These drive the 4th eval suite, `tests/test_memory_extraction.py`, in the same
 recorded-fixture style as the Phase 7 suites (`tc_*`, `rf_*`, `grd_*`): committed JSON
 holds the model reply, the real production code runs against a fake client replaying
-it, and CI never calls a live API (CLAUDE.md rule 10).
+it, and CI never calls a live API.
 
 ## Status
 

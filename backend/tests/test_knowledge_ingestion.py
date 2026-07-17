@@ -1,9 +1,9 @@
 """Ingestion chunking/footer-parsing tests — pure functions only.
 
 No network, no DB, and no real corpus: the ``knowledge_base/`` content is authored
-separately, so these tests run entirely on fixture markdown strings (CLAUDE.md
-rule 10 — CI must not hit live services, and must not depend on corpus files
-existing). Covers the footer convention, section chunking, the leading
+separately, so these tests run entirely on fixture markdown strings (CI must not
+hit live services, and must not depend on corpus files existing). Covers the
+footer convention, section chunking, the leading
 preamble rule, the prepended title/heading embed format, and index ordering.
 """
 

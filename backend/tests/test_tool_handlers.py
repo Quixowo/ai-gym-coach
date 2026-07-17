@@ -8,7 +8,7 @@ prior/requested; and cross-user isolation (user B's ids -> error/absent, no leak
 The mutating handlers (``log_set`` / ``update_program``) open their own session via
 ``app.db.session.async_session_maker``; an autouse fixture points that at the NullPool
 test session maker so writes stay on the same engine as the rest of the test setup
-(LESSONS.md closed-loop family).
+(the closed-loop bug family, see conftest.py).
 """
 
 from __future__ import annotations

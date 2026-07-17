@@ -2,7 +2,7 @@
 
 The actual ``alembic upgrade head`` is run once by the session-scoped
 ``migrated_db`` autouse fixture in ``conftest.py`` (see that module for why it
-must run synchronously, outside pytest-asyncio's loop — LESSONS.md). This test
+must run synchronously, outside pytest-asyncio's loop). This test
 therefore only *asserts* the resulting schema: all seven public tables exist,
 the ``vector`` extension is installed, and both special indexes are present.
 

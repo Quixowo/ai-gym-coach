@@ -4,11 +4,11 @@ Single source of truth for the workout write/read path, shared by the REST
 endpoints (Phase 3) and the ``log_set`` / ``get_workout_history`` agent tools
 (Phase 4). Every function that touches user data takes ``user_id`` as an explicit
 argument and filters on it — this is the project's application-level access
-control (CLAUDE.md rule 2/9): a caller-supplied session or set id is
+control: a caller-supplied session or set id is
 never trusted without also matching ``user_id``, so a cross-user reference
 surfaces as :class:`NotFoundError` (404), never a leak.
 
-Deterministic logic lives here, not in the model's judgment (CLAUDE.md rule 3):
+Deterministic logic lives here, not in the model's judgment:
 field validation, the open-session find-or-create, and the per-exercise
 ``set_number`` computation are all done in code.
 """

@@ -1,7 +1,6 @@
 """Tool execution — the trusted server side of every agent tool call.
 
-``execute_tool`` is the single dispatch point the orchestrator calls. Contract
-(CLAUDE.md rules 2 & 4):
+``execute_tool`` is the single dispatch point the orchestrator calls. Contract:
 
 - ``current_user_id`` is injected here from the JWT-verified session and passed to
   every service call. It is NEVER read from ``tool_input`` — the LLM-supplied input
@@ -48,7 +47,8 @@ def _new_session() -> AsyncSession:
 
     Resolved through the module at call time (not imported once) so tests can point
     the mutating handlers at the NullPool test session maker, keeping DB writes on the
-    same engine as the rest of the test setup (LESSONS.md closed-loop family).
+    same engine as the rest of the test setup (the closed-loop bug family, see
+    conftest.py).
     """
     return db_session_module.async_session_maker()
 
@@ -206,7 +206,7 @@ async def handle_search_knowledge_base(
     The knowledge base is global/unscoped non-user data, so ``current_user_id`` is
     accepted only for the uniform handler signature (like ``search_exercises``). Every
     failure in the pipeline — Voyage embedding outage, Anthropic outage, DB error —
-    must surface as ``{"error": ...}`` (CLAUDE.md rule 4): an embedding-provider
+    must surface as ``{"error": ...}``: an embedding-provider
     exception here would otherwise tear down the whole SSE stream.
     """
     try:
@@ -357,7 +357,7 @@ async def execute_tool(
     """Dispatch one tool call to its handler; always returns a dict, never raises.
 
     ``current_user_id`` is the orchestrator's JWT-verified user, injected into every
-    handler — never sourced from ``tool_input`` (CLAUDE.md rule 2). An unknown tool
+    handler — never sourced from ``tool_input``. An unknown tool
     name (the model hallucinating a tool) returns a structured error rather than
     raising.
     """

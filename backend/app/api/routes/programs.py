@@ -10,8 +10,8 @@ Service domain exceptions translate to HTTP: ``NotFoundError`` -> 404,
 ``ValidationError`` (incl. ``LoadJumpCapError``) -> 422. The service stays
 HTTP-agnostic for Phase-4 tool reuse.
 
-Rate limiting: explicit ``@limiter.limit`` per route (LESSONS.md; ``request:
-Request`` required).
+Rate limiting: explicit ``@limiter.limit`` per route (slowapi's middleware-only
+limits skip router-mounted routes; ``request: Request`` required).
 """
 
 from __future__ import annotations

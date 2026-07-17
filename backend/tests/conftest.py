@@ -1,6 +1,6 @@
 """Shared pytest fixtures.
 
-What the eval suites do and do NOT verify (CLAUDE.md rule 10):
+What the eval suites do and do NOT verify:
 the model-behavior suites — ``test_tool_correctness``, ``test_groundedness``,
 ``test_red_flag_recall`` — replay Claude/Voyage responses recorded once and committed
 under ``tests/fixtures/claude_responses/``. They verify that the *code* handles a
@@ -17,7 +17,7 @@ Two things are set up here for the whole session:
 
 1. **Schema is migrated once** — a session-scoped autouse fixture runs
    ``alembic upgrade head`` a single time, synchronously, before any test.
-   Per LESSONS.md, alembic's async ``env.py`` calls ``asyncio.run()`` internally,
+   Alembic's async ``env.py`` calls ``asyncio.run()`` internally,
    so it must NOT run inside pytest-asyncio's event loop — hence this fixture is
    a plain (sync) function and every test can then assume the schema exists.
 
@@ -58,8 +58,8 @@ def migrated_db() -> None:
     """Run ``alembic upgrade head`` exactly once before the suite (sync).
 
     Idempotent: a no-op if the DB is already at head. Kept synchronous so it does
-    not collide with pytest-asyncio's running loop (see module docstring /
-    LESSONS.md). Requires a reachable Postgres (docker compose up -d / CI service).
+    not collide with pytest-asyncio's running loop (see module docstring).
+    Requires a reachable Postgres (docker compose up -d / CI service).
     """
     command.upgrade(_alembic_config(), "head")
 
@@ -77,7 +77,7 @@ def seeded_exercises(migrated_db: None) -> None:
     pooled ``async_session_maker``) via ``asyncio.run`` in its own loop. Using the
     pooled engine here would cache a connection bound to this throwaway loop; when
     the loop closes, the poisoned pooled connection later breaks the ``/health``
-    route's ``SELECT 1`` with "Event loop is closed" (see LESSONS.md). NullPool
+    route's ``SELECT 1`` with "Event loop is closed". NullPool
     keeps nothing across loops, so the seed is self-contained.
     """
     from sqlalchemy import func, select
@@ -115,7 +115,7 @@ async def _override_get_db() -> AsyncGenerator[AsyncSession]:
 # Public handle to the NullPool session maker for tests that drive the services /
 # agent layer directly (progression math, tool handlers) rather than via HTTP. Using
 # this — never the app's pooled ``async_session_maker`` — keeps DB setup on the same
-# NullPool engine, avoiding the closed-loop family of bugs in LESSONS.md.
+# NullPool engine, avoiding the closed-loop family of bugs (see module docstring).
 test_session_maker = _test_session_maker
 
 

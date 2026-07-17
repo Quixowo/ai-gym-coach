@@ -18,7 +18,7 @@ class UserMemory(Base):
     maintained via upsert, so two turns consolidating at once can't create duplicates
     (last write wins; recency wins on contradictions during synthesis). ``user_id`` is
     denormalized and always sourced from the verified JWT (application-level access
-    control; CLAUDE.md rule 2). The stored text is a third-person fact, never verbatim
+    control). The stored text is a third-person fact, never verbatim
     user input, and is never used to build tool arguments.
     """
 

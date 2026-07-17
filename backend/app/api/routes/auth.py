@@ -14,7 +14,7 @@ decorator rather than relying solely on the app-wide ``SlowAPIMiddleware``. In
 this FastAPI version, ``include_router`` nests routes under a router object that
 slowapi's middleware route-lookup can't resolve, so middleware-only limits would
 silently skip every ``/auth/*`` route. The decorator enforces the limit at the
-handler wrapper, which works regardless of nesting. (See LESSONS.md.)
+handler wrapper, which works regardless of nesting.
 """
 
 from __future__ import annotations

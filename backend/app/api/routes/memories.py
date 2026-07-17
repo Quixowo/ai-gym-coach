@@ -8,7 +8,7 @@ one.
 
 Both routes sit behind ``get_current_user`` exactly like ``workouts.py``/
 ``programs.py``, and every query filters ``WHERE user_id = :uid`` (application-level
-access control, CLAUDE.md rules 2/9 — never call it RLS): a memory id that doesn't
+access control — never call it RLS): a memory id that doesn't
 exist, or exists but belongs to another user, 404s identically so ownership is never
 leaked.
 
@@ -23,7 +23,7 @@ deleting only the consolidated row would leave the memory to silently reappear t
 next time the topic comes up in conversation.
 
 Rate limiting: explicit ``@limiter.limit`` per route, matching ``workouts.py``
-(LESSONS.md — slowapi's middleware-only limits silently skip router-mounted routes;
+(slowapi's middleware-only limits silently skip router-mounted routes;
 the handler needs a ``request: Request`` param).
 """
 

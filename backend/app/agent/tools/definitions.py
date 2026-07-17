@@ -3,7 +3,7 @@
 The seven tools available to the agent loop: the six non-RAG tools plus the RAG
 tool ``search_knowledge_base`` (added in Phase 5).
 
-Invariant (CLAUDE.md rule 2): **no ``user_id`` — or any user-scoping
+Invariant: **no ``user_id`` — or any user-scoping
 field — appears in any schema below.** There is nothing for the model to set even
 under adversarial prompting; the orchestrator injects the verified ``user_id`` into
 every handler at execution time, from the JWT-resolved session. Do not add a user

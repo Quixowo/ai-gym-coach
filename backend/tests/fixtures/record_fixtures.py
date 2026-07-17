@@ -7,7 +7,7 @@ Run from ``backend/``::
     python -m tests.fixtures.record_fixtures --mock              # plumbing, ZERO spend
     python -m tests.fixtures.record_fixtures --force             # re-record existing
 
-This is the ONLY place a live model is called (CLAUDE.md rule 10). It captures the
+This is the ONLY place a live model is called. It captures the
 model's real decisions once and commits them under ``claude_responses/`` so the
 suites (and CI) replay recordings, never the live API. Each fixture JSON is written
 IMMEDIATELY as it is captured and existing fixtures are skipped unless ``--force``,
@@ -18,7 +18,7 @@ canned synthesis/verdict/classifier text, synthetic embeddings) so the entire
 capture → serialize → write pipeline can be exercised with no API spend before the
 real budget is committed. The live pass then overwrites the mock fixtures.
 
-Windows console note (LESSONS.md): stdout is reconfigured to UTF-8 and every
+Windows console note: stdout is reconfigured to UTF-8 and every
 paid-for capture is written to its UTF-8 fixture file BEFORE anything is printed,
 so a cp1252 console crash on model output containing emoji/dashes can't lose it.
 """
@@ -61,7 +61,7 @@ from tests.fixtures._replay import FakeAnthropicClient, FakeVoyageClient, query_
 from tests.helpers import create_db_user
 
 # Reconfigure stdout before any printing — model output may contain characters the
-# Windows cp1252 console can't encode (LESSONS.md). Fixtures are also written to
+# Windows cp1252 console can't encode. Fixtures are also written to
 # UTF-8 files before printing, so a console crash can't lose paid-for output.
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[union-attr]
@@ -71,7 +71,7 @@ except Exception:  # noqa: BLE001 — best-effort; non-fatal if unsupported
 FIXTURES_DIR = Path(__file__).resolve().parent / "claude_responses"
 METRICS_PATH = Path(__file__).resolve().parent / "recording_metrics.json"
 
-VOYAGE_MIN_INTERVAL_S = 21.0  # no-card Voyage tier: 3 RPM (LESSONS.md)
+VOYAGE_MIN_INTERVAL_S = 21.0  # no-card Voyage tier: 3 RPM
 _last_embed_time = 0.0
 
 

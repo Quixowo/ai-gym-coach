@@ -13,10 +13,10 @@ than incremental diffing (one transaction, converges every time).
 Design notes:
 - The ``knowledge_base/`` path is anchored to the repo layout via ``Path(__file__)``,
   never CWD-relative — a CWD-relative path silently reads nothing when this runs
-  from ``backend/`` (LESSONS.md env_file entry, same class of bug).
+  from ``backend/`` (the same class of bug as a CWD-relative ``env_file`` setting).
 - Footer parsing and section chunking are pure functions (:func:`parse_document`,
   :func:`chunk_document`) with no network/DB dependency, so they're unit-testable
-  on fixture strings (CLAUDE.md rule 10 — no live calls in CI).
+  on fixture strings (no live calls in CI).
 - Embedding uses the SYNC ``voyageai.Client`` deliberately: this is a one-off
   offline script, not the request path, so blocking is fine. The async
   client is reserved for retrieval (:mod:`app.llm.voyage`).
@@ -36,7 +36,7 @@ from app.db.session import async_session_maker
 from app.models.knowledge_chunk import KnowledgeChunk
 
 # knowledge_base/ sits at the repo root, next to backend/. Anchor to this file's
-# location, not the CWD (LESSONS.md): backend/seed/ -> parents[2] is the repo root.
+# location, not the CWD: backend/seed/ -> parents[2] is the repo root.
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 KNOWLEDGE_BASE_DIR = _REPO_ROOT / "knowledge_base"
 

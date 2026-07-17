@@ -20,7 +20,7 @@ class MemoryObservation(Base):
     conversations table (chat is otherwise stateless server-side). ``user_id`` is
     denormalized so every access-control query filters with a single
     ``WHERE user_id = :uid`` (application-level access control); it always comes from
-    the verified JWT, never from model output (CLAUDE.md rule 2).
+    the verified JWT, never from model output.
     """
 
     __tablename__ = "memory_observations"

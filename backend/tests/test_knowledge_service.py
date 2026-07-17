@@ -5,13 +5,13 @@ Both provider factories are patched at their module of use
 embedding, and a fake Anthropic client pops scripted responses (synthesis first,
 groundedness second). Retrieval itself runs against the real Postgres+pgvector
 through the NullPool test session maker — NEVER the app's pooled engine
-(LESSONS.md closed-loop family) — with deterministic 1024-dim unit vectors so
-cosine ranking is predictable.
+(the closed-loop bug family, see conftest.py) — with deterministic 1024-dim unit
+vectors so cosine ranking is predictable.
 
-Also covers the ``search_knowledge_base`` tool handler (CLAUDE.md rule 4: a
-provider outage must become ``{"error": ...}``, never an exception into the SSE
-stream). Per-call kwargs are snapshotted in the fakes before storage — mutable
-kwargs alias otherwise (LESSONS.md stream-kwargs entry).
+Also covers the ``search_knowledge_base`` tool handler (a provider outage must
+become ``{"error": ...}``, never an exception into the SSE stream). Per-call
+kwargs are snapshotted in the fakes before storage — mutable kwargs alias
+otherwise.
 """
 
 from __future__ import annotations
@@ -60,7 +60,7 @@ class _FakeVoyage:
     async def embed(self, texts, **kwargs):
         if self._raises is not None:
             raise self._raises
-        # Snapshot mutable args at call time (LESSONS.md stream-kwargs entry).
+        # Snapshot mutable args at call time — the caller may mutate/reuse kwargs.
         self.embed_calls.append({"texts": list(texts), **dict(kwargs)})
         return _FakeEmbedResult([self._embedding])
 
@@ -102,7 +102,7 @@ def _patch_clients(
 
 
 # --------------------------------------------------------------------------- #
-# DB fixtures/helpers — NullPool test session maker only (LESSONS.md)
+# DB fixtures/helpers — NullPool test session maker only
 # --------------------------------------------------------------------------- #
 @pytest.fixture(autouse=True)
 async def _empty_knowledge_chunks():
@@ -297,7 +297,7 @@ async def test_sources_deduped_by_document_title(monkeypatch: pytest.MonkeyPatch
 
 
 # --------------------------------------------------------------------------- #
-# Tool handler — passthrough, input validation, provider outage (CLAUDE.md rule 4)
+# Tool handler — passthrough, input validation, provider outage
 # --------------------------------------------------------------------------- #
 async def test_handler_returns_service_dict_as_is(monkeypatch: pytest.MonkeyPatch) -> None:
     voyage = _FakeVoyage(embedding=_vec(0))
@@ -332,7 +332,7 @@ async def test_handler_voyage_outage_returns_structured_error(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     # An embedding-provider exception must become {"error": ...}, never propagate
-    # into the SSE stream (CLAUDE.md rule 4).
+    # into the SSE stream.
     _patch_clients(monkeypatch, _FakeVoyage(raises=RuntimeError("voyage down")), _FakeAnthropic([]))
 
     async with session_maker() as db:

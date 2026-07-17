@@ -3,7 +3,7 @@
 Mirrors the Phase 7 eval suites (``test_tool_correctness`` / ``test_groundedness`` /
 ``test_red_flag_recall``): committed JSON fixtures under ``claude_responses/`` carry
 the raw model reply, the REAL production code runs against a fake client replaying it,
-and CI never touches a live API (CLAUDE.md rule 10).
+and CI never touches a live API.
 
 The extraction step calls ``client.messages.create`` and reads ``resp.content[0].text``
 (a JSON array), exactly like the classifier/RAG surfaces. So each ``mem_*.json`` fixture
@@ -181,8 +181,9 @@ async def test_topic_key_reuse(monkeypatch: pytest.MonkeyPatch) -> None:
         )
 
         # The prompt sent to the mock listed the user's existing topic_keys for reuse.
-        # Snapshot the request kwargs at call time (the mock copies messages per the
-        # LESSONS.md aliasing trap), so this reads what was actually sent on that call.
+        # Snapshot the request kwargs at call time (the mock copies messages to avoid
+        # aliasing the orchestrator's mutable list), so this reads what was actually
+        # sent on that call.
         assert len(fake.messages.create_calls) == 1
         prompt = fake.messages.create_calls[0]["messages"][0]["content"]
         assert reused_key in prompt

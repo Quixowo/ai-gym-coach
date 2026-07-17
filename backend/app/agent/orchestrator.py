@@ -6,7 +6,7 @@ verified ``user_id``), feed results back, and repeat up to ``MAX_ITERATIONS``. I
 an async generator yielding the stream event objects defined in ``app.agent.events``;
 the chat route serializes them to SSE frames.
 
-Invariants enforced here (CLAUDE.md):
+Invariants enforced here:
 - Rule 1: hand-rolled on the raw ``anthropic`` SDK — no orchestration framework.
 - Rule 2: ``current_user_id`` is passed to ``execute_tool`` from the verified session,
   never from tool input; the conversation ``history`` is untrusted conversational
@@ -49,7 +49,7 @@ from app.services.memory_service import get_memories_for_prompt
 
 log = get_logger(__name__)
 
-MAX_ITERATIONS = 8  # sole loop-safety mechanism (CLAUDE.md rule 5)
+MAX_ITERATIONS = 8  # sole loop-safety mechanism
 MAX_HISTORY_TURNS = 20  # bound history before sending
 MAX_TOKENS = 2048
 

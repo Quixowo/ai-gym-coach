@@ -20,7 +20,7 @@
  *   - turn_complete is a full-width hairline divider so multiple turns group
  *     visually as the event list grows.
  *   - No clear/reset: traceEvents accumulate across turns by design (live-only,
- *     gone on refresh per CLAUDE.md invariant).
+ *     gone on refresh — traces are never persisted).
  */
 
 import { useEffect, useRef } from 'react'

@@ -9,7 +9,7 @@ Service domain exceptions are translated to HTTP status here: ``ValidationError`
 HTTP-agnostic so the Phase-4 tool path can reuse it and render ``{"error": ...}``
 instead.
 
-Rate limiting: explicit ``@limiter.limit`` per route (LESSONS.md — middleware-only
+Rate limiting: explicit ``@limiter.limit`` per route (middleware-only
 limits skip router-mounted routes; handler takes ``request: Request``).
 """
 

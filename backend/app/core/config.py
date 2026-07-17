@@ -5,7 +5,7 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Anchor .env resolution to the repo layout, not the process CWD: the shared .env
-# lives at the repo root (CLAUDE.md), and a CWD-relative "env_file='.env'" silently
+# lives at the repo root, and a CWD-relative "env_file='.env'" silently
 # loads nothing when uvicorn/pytest run from backend/. Later entries win, so a
 # backend-local .env can override the root one.
 _BACKEND_DIR = Path(__file__).resolve().parents[2]

@@ -1,7 +1,7 @@
 """Progression-analysis service.
 
 The single, deterministic implementation behind the ``analyze_progression`` agent
-tool. Per CLAUDE.md rule 3 the progression math (Epley 1RM, first-half/second-half
+tool. The progression math (Epley 1RM, first-half/second-half
 trend, RIR trend at comparable load, plateau detection) lives here in code — the
 LLM is never trusted to eyeball raw set data. No LLM calls happen in this module.
 

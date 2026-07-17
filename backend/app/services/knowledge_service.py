@@ -11,18 +11,18 @@ This is the implementation behind the tool contract. One call:
 Design decisions worth flagging:
 - The knowledge base is global/unscoped — it holds no user data, so there is no
   ``user_id`` filter here (application-level access control applies to user-owned
-  tables, not this one; CLAUDE.md rule 9). This is not a gap.
+  tables, not this one). This is not a gap.
 - Groundedness failure does NOT discard retrieval: we log a
   structured ``groundedness_failed`` warning and return a conservative answer WITH
   the sources so the user can read the material directly rather than being left
   with nothing.
 - Deterministic bits (dedup by title, top-k ordering) live in code, not in the
-  model (CLAUDE.md rule 3). Haiku only does the two language tasks (synthesis,
+  model. Haiku only does the two language tasks (synthesis,
   entailment).
 
 The client factories (:func:`get_voyage_client`, :func:`get_anthropic_client`) are
 imported and called here so tests patch them at THIS module (their point of use)
-and no live API is hit in CI (CLAUDE.md rule 10).
+and no live API is hit in CI.
 """
 
 from __future__ import annotations
@@ -127,7 +127,7 @@ async def search_knowledge_base(db: AsyncSession, query: str, top_k: int = DEFAU
     an explicit no-results answer; a failed groundedness check yields the
     conservative fallback answer *with* the sources and ``groundedness_passed=False``
     (never discards retrieval). Raises on provider/DB failure — the tool handler
-    wraps that into ``{"error": ...}`` per CLAUDE.md rule 4.
+    wraps that into ``{"error": ...}``.
     """
     voyage = get_voyage_client()
     embed_result = await voyage.embed([query], model=settings.EMBED_MODEL_ID, input_type="query")

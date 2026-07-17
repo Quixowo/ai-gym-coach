@@ -5,8 +5,8 @@ filter (the deliberate exception to application-level access control — there i
 no user data here). Both endpoints are still behind ``get_current_user``: the
 catalog is only exposed to authenticated users, and 401s without a cookie.
 
-Rate limiting: each route carries an explicit ``@limiter.limit`` decorator — per
-LESSONS.md, slowapi's middleware-only default limits silently skip
+Rate limiting: each route carries an explicit ``@limiter.limit`` decorator —
+slowapi's middleware-only default limits silently skip
 ``include_router`` routes, so the decorator (handler needs ``request: Request``)
 is what actually enforces the 60/min tier here.
 """

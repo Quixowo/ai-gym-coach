@@ -1,7 +1,7 @@
 /* =====================================================================
    HeyCoach — design token system
 
-   Direction: Apple design language (see DESIGN.md) inverted to a true-black
+   Direction: Apple design language, inverted to a true-black
    canvas and applied to app UI rather than a marketing site. Single blue
    accent, system-font stack, hairlines over shadows, pill CTAs, tight
    display tracking. No gradients. No shadows on chrome — elevation comes
@@ -12,7 +12,7 @@
    on a surface-1 panel, like an Apple Watch workout summary.
    ===================================================================== */
 
-/* ---- Google Fonts: Inter (SF Pro substitute — see DESIGN.md font-substitute note) --- */
+/* ---- Google Fonts: Inter (SF Pro substitute) --- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
 /* ---- Design tokens ---- */
