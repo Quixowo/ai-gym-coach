@@ -196,3 +196,43 @@ def test_access_token_rejected_as_refresh_401(client: TestClient) -> None:
     )
     resp = client.post("/auth/refresh", cookies={"refresh_token": access})
     assert resp.status_code == 401
+
+
+# --------------------------------------------------------------------------- #
+# Input-size caps -> 422 (cost containment: display_name/injury_notes reach the
+# system prompt every turn; message-path caps live in test_chat_route.py)
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("email", "a" * 250 + "@example.com"),  # > 254 total
+        ("password", "p" * 129),
+        ("display_name", "d" * 81),
+        ("injury_notes", "i" * 2001),
+    ],
+)
+def test_register_rejects_oversized_field(client: TestClient, field: str, value: str) -> None:
+    client.cookies.clear()
+    payload = _register_payload()
+    payload[field] = value
+    resp = client.post("/auth/register", json=payload)
+    assert resp.status_code == 422, resp.text
+
+
+def test_register_accepts_at_boundary_lengths(client: TestClient) -> None:
+    """Exactly-at-cap values are legal — the caps bound, they don't shrink, the API."""
+    client.cookies.clear()
+    payload = _register_payload(password="p" * 128)
+    payload["display_name"] = "d" * 80
+    payload["injury_notes"] = "i" * 2000
+    resp = client.post("/auth/register", json=payload)
+    assert resp.status_code == 201, resp.text
+
+
+def test_login_rejects_oversized_password(client: TestClient) -> None:
+    client.cookies.clear()
+    resp = client.post(
+        "/auth/login",
+        json={"email": "someone@example.com", "password": "p" * 129},
+    )
+    assert resp.status_code == 422, resp.text

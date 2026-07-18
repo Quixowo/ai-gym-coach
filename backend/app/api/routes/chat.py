@@ -52,6 +52,19 @@ router = APIRouter(tags=["chat"])
 log = get_logger(__name__)
 
 
+# Input-size caps — cost containment, not correctness. Every char accepted here can
+# reach a paid Claude call, and there is no upstream bound: ``message`` and each
+# replayed history turn flow into the orchestrator's request. ``content`` gets the
+# larger cap because it also carries replayed *assistant* turns, which can
+# legitimately run ~9K chars at the orchestrator's 2048-token output ceiling — a
+# tight cap would 422 honest replays mid-conversation. History item *count* is
+# bounded far above what the orchestrator keeps (it truncates to the last 20
+# messages); the cap only stops pathological request blobs.
+MAX_MESSAGE_CHARS = 4_000
+MAX_HISTORY_CONTENT_CHARS = 16_000
+MAX_HISTORY_ITEMS = 400
+
+
 class ChatMessage(BaseModel):
     """One prior conversational turn replayed by the frontend.
 
@@ -61,12 +74,12 @@ class ChatMessage(BaseModel):
     """
 
     role: Literal["user", "assistant"]
-    content: str
+    content: str = Field(max_length=MAX_HISTORY_CONTENT_CHARS)
 
 
 class ChatRequest(BaseModel):
-    message: str = Field(min_length=1)
-    history: list[ChatMessage] = Field(default_factory=list)
+    message: str = Field(min_length=1, max_length=MAX_MESSAGE_CHARS)
+    history: list[ChatMessage] = Field(default_factory=list, max_length=MAX_HISTORY_ITEMS)
     # Frontend-generated per-chat UUID (crypto.randomUUID() at mount). Groups this
     # turn's memory observations with the rest of the same chat. Optional: when absent
     # the memory pipeline is skipped entirely (backward compatible). Only ever used to

@@ -13,5 +13,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping health endpoint (touches the DB)
-        # Replace <your-render-app> with the deployed Render service subdomain.
-        run: curl -fsS https://<your-render-app>.onrender.com/health
+        run: curl -fsS https://heycoach.onrender.com/health

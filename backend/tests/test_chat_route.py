@@ -4,7 +4,8 @@ Patches ``classify_acute_injury`` and ``run_agent_turn`` at the chat route's imp
 boundary so no Anthropic call is made. Verifies: auth guard (401); the classifier
 short-circuit streams the fixed redirect and NEVER calls the orchestrator; a normal
 message streams mocked orchestrator events as ``data:`` SSE frames; malformed history
-(bad role) is rejected at validation (422).
+(bad role) and oversized inputs (message/content/history-count caps) are rejected at
+validation (422) while at-cap values still stream.
 """
 
 from __future__ import annotations
@@ -60,6 +61,61 @@ def test_empty_message_rejected(client: TestClient) -> None:
     register_user(client)
     resp = client.post("/chat", json={"message": ""})
     assert resp.status_code == 422
+
+
+# --------------------------------------------------------------------------- #
+# Input-size caps -> 422 (cost containment: every accepted char can reach a paid
+# Claude call). At-cap values must still pass — the caps bound, don't shrink, the API.
+# --------------------------------------------------------------------------- #
+def test_oversized_message_rejected(client: TestClient) -> None:
+    register_user(client)
+    resp = client.post("/chat", json={"message": "x" * (chat_module.MAX_MESSAGE_CHARS + 1)})
+    assert resp.status_code == 422
+
+
+def test_oversized_history_content_rejected(client: TestClient) -> None:
+    register_user(client)
+    too_long = "x" * (chat_module.MAX_HISTORY_CONTENT_CHARS + 1)
+    resp = client.post(
+        "/chat",
+        json={"message": "hi", "history": [{"role": "assistant", "content": too_long}]},
+    )
+    assert resp.status_code == 422
+
+
+def test_oversized_history_count_rejected(client: TestClient) -> None:
+    register_user(client)
+    history = [{"role": "user", "content": "x"}] * (chat_module.MAX_HISTORY_ITEMS + 1)
+    resp = client.post("/chat", json={"message": "hi", "history": history})
+    assert resp.status_code == 422
+
+
+def test_at_cap_message_and_content_accepted(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Exactly-at-cap message + a long (legit assistant-sized) history turn stream fine."""
+    register_user(client)
+
+    async def _no_flag(_message: str) -> bool:
+        return False
+
+    async def _orchestrator(message, history, user_id, db):
+        yield TurnCompleteEvent(iterations=0, total_latency_ms=1)
+
+    monkeypatch.setattr(chat_module, "classify_acute_injury", _no_flag)
+    monkeypatch.setattr(chat_module, "run_agent_turn", _orchestrator)
+
+    resp = client.post(
+        "/chat",
+        json={
+            "message": "x" * chat_module.MAX_MESSAGE_CHARS,
+            "history": [
+                {"role": "assistant", "content": "y" * chat_module.MAX_HISTORY_CONTENT_CHARS}
+            ],
+        },
+    )
+    assert resp.status_code == 200
+    assert _parse_sse(resp.text)[-1]["type"] == "turn_complete"
 
 
 # --------------------------------------------------------------------------- #
